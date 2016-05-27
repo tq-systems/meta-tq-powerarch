@@ -1,0 +1,32 @@
+From 614abbaeaf8217e58128ce46d675c28687066ff8 Mon Sep 17 00:00:00 2001
+From: Stephen Boyd <sboyd@codeaurora.org>
+Date: Wed, 21 Oct 2015 16:05:23 -0700
+Subject: [PATCH] serial: msm_serial: Make config tristate
+
+This driver works as a module, so mark it as a tristate config
+instead of a bool.
+
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Reviewed-by: Andy Gross <agross@codeaurora.org>
+Signed-off-by: Andy Gross <agross@codeaurora.org>
+---
+ drivers/tty/serial/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index f38beb2..ee9c513 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1044,7 +1044,7 @@ config SERIAL_SGI_IOC3
+ 	  say Y or M.  Otherwise, say N.
+ 
+ config SERIAL_MSM
+-	bool "MSM on-chip serial port support"
++	tristate "MSM on-chip serial port support"
+ 	depends on ARCH_QCOM
+ 	select SERIAL_CORE
+ 
+-- 
+1.9.1
+

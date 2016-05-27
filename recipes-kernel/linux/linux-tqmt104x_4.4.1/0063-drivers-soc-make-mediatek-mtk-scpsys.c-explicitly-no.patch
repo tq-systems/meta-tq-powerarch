@@ -1,0 +1,56 @@
+From b72abf2e3abeb8167318185cb047b37fcf42561d Mon Sep 17 00:00:00 2001
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Fri, 4 Sep 2015 19:33:54 -0400
+Subject: [PATCH] drivers/soc: make mediatek/mtk-scpsys.c explicitly
+ non-modular
+
+The Kconfig currently controlling compilation of this code is:
+
+drivers/soc/mediatek/Kconfig:config MTK_SCPSYS
+drivers/soc/mediatek/Kconfig:   bool "MediaTek SCPSYS Support"
+
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the couple traces of modularity so that when reading the
+driver there is no doubt it is builtin-only.
+
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
+
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Olof Johansson <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mediatek@lists.infradead.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index e425619..0221387 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -15,7 +15,7 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+@@ -548,5 +548,4 @@ static struct platform_driver scpsys_drv = {
+ 		.of_match_table = of_match_ptr(of_scpsys_match_tbl),
+ 	},
+ };
+-
+-module_platform_driver_probe(scpsys_drv, scpsys_probe);
++builtin_platform_driver_probe(scpsys_drv, scpsys_probe);
+-- 
+1.9.1
+

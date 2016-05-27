@@ -1,0 +1,38 @@
+From 3eb1a4baa8f3d4cdc528c6fad9b90153da4f4cc5 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 30 Mar 2016 16:45:56 +0200
+Subject: [PATCH] minor re-adjustment of drivers/soc/Kconfig and Makefile,
+ leftover from QE moving patch
+
+---
+ drivers/soc/Kconfig  | 1 +
+ drivers/soc/Makefile | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 109939f..8826020 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -2,6 +2,7 @@ menu "SOC (System On Chip) specific Drivers"
+ 
+ source "drivers/soc/bcm/Kconfig"
+ source "drivers/soc/brcmstb/Kconfig"
++source "drivers/soc/fsl/qe/Kconfig"
+ source "drivers/soc/mediatek/Kconfig"
+ source "drivers/soc/qcom/Kconfig"
+ source "drivers/soc/rockchip/Kconfig"
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index f3f955c..9b1032a 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -5,6 +5,7 @@
+ obj-y				+= bcm/
+ obj-$(CONFIG_SOC_BRCMSTB)	+= brcmstb/
+ obj-$(CONFIG_MACH_DOVE)		+= dove/
++obj-y				+= fsl/
+ obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
+ obj-$(CONFIG_ARCH_QCOM)		+= qcom/
+ obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+-- 
+1.9.1
+

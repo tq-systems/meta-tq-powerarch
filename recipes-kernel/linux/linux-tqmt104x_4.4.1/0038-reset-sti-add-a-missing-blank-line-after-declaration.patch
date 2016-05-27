@@ -1,0 +1,31 @@
+From 77a1c2c27799c7c6ff178d58679c795296cef7cb Mon Sep 17 00:00:00 2001
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Date: Thu, 29 Oct 2015 10:02:53 +0100
+Subject: [PATCH] reset: sti: add a missing blank line after declaration
+
+This just fixes a checkpatch warning, no functional change.
+
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
+---
+ drivers/reset/sti/reset-syscfg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/reset/sti/reset-syscfg.c b/drivers/reset/sti/reset-syscfg.c
+index a78e09c..1600cc7 100644
+--- a/drivers/reset/sti/reset-syscfg.c
++++ b/drivers/reset/sti/reset-syscfg.c
+@@ -103,7 +103,9 @@ static int syscfg_reset_deassert(struct reset_controller_dev *rcdev,
+ static int syscfg_reset_dev(struct reset_controller_dev *rcdev,
+ 			    unsigned long idx)
+ {
+-	int err = syscfg_reset_assert(rcdev, idx);
++	int err;
++
++	err = syscfg_reset_assert(rcdev, idx);
+ 	if (err)
+ 		return err;
+ 
+-- 
+1.9.1
+

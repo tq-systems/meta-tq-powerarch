@@ -1,0 +1,29 @@
+From 1c028b3e7eba0065599a5073338a65738270cd4a Mon Sep 17 00:00:00 2001
+From: Olof Johansson <olof@lixom.net>
+Date: Tue, 22 Dec 2015 12:15:43 -0800
+Subject: [PATCH] MAINTAINERS: Drop Kumar Gala from QCOM
+
+commit bbeaa59598ca ("MAINTAINERS: Change QCOM entries") was supposed to drop
+Kumar, but didn't. Kumar acked the patch but I suspect Andy had a mistake in
+a rebase. Fix it up.
+
+Signed-off-by: Olof Johansson <olof@lixom.net>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 72fb14a..29d7210 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1400,7 +1400,6 @@ W:	http://www.arm.linux.org.uk/
+ S:	Maintained
+ 
+ ARM/QUALCOMM SUPPORT
+-M:	Kumar Gala <galak@codeaurora.org>
+ M:	Andy Gross <andy.gross@linaro.org>
+ M:	David Brown <david.brown@linaro.org>
+ L:	linux-arm-msm@vger.kernel.org
+-- 
+1.9.1
+

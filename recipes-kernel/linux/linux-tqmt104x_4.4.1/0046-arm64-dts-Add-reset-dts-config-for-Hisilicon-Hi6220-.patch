@@ -1,0 +1,28 @@
+From a331f573c37babf7cb0c009180caacbb42000825 Mon Sep 17 00:00:00 2001
+From: Chen Feng <puck.chen@hisilicon.com>
+Date: Fri, 20 Nov 2015 10:10:06 +0800
+Subject: [PATCH] arm64: dts: Add reset dts config for Hisilicon Hi6220 SoC
+
+Add reset controller for hi6220 hikey-board.
+
+Signed-off-by: Chen Feng <puck.chen@hisilicon.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index 82d2488..ad1f1eb 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -147,6 +147,7 @@
+ 			compatible = "hisilicon,hi6220-sysctrl", "syscon";
+ 			reg = <0x0 0xf7030000 0x0 0x2000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 		};
+ 
+ 		media_ctrl: media_ctrl@f4410000 {
+-- 
+1.9.1
+

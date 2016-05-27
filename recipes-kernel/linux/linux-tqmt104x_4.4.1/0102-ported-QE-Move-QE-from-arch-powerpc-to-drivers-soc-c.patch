@@ -1,0 +1,27 @@
+From 1ade6f8a62b1869a6559b6b4e00da5debd774521 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Mon, 4 Apr 2016 11:15:49 +0200
+Subject: [PATCH] ported QE: Move QE from arch/powerpc to drivers/soc commit
+ 7aa1aa6ecec2af19d9aa85430ce3e56119e21626 from linux stable; ported missing
+ hunk
+
+---
+ arch/powerpc/platforms/85xx/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/85xx/common.c b/arch/powerpc/platforms/85xx/common.c
+index 18bca20..949f22c 100644
+--- a/arch/powerpc/platforms/85xx/common.c
++++ b/arch/powerpc/platforms/85xx/common.c
+@@ -9,7 +9,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ 
+-#include <asm/qe.h>
++#include <soc/fsl/qe/qe.h>
+ #include <sysdev/cpm2_pic.h>
+ 
+ #include "mpc85xx.h"
+-- 
+1.9.1
+
