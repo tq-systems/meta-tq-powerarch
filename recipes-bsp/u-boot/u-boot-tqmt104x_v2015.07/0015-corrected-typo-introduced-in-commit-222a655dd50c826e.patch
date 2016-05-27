@@ -1,0 +1,26 @@
+From 5ecda3937b9063bc50719669906b9a6a990778cf Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 12 May 2016 11:11:19 +0200
+Subject: [PATCH] corrected typo introduced in commit
+ 222a655dd50c826e3d8d801bb8e58289be75df7c RCW serdes protocol configuration
+
+---
+ arch/powerpc/cpu/mpc85xx/t1040_serdes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/cpu/mpc85xx/t1040_serdes.c b/arch/powerpc/cpu/mpc85xx/t1040_serdes.c
+index 6002a4f..0f0b473 100644
+--- a/arch/powerpc/cpu/mpc85xx/t1040_serdes.c
++++ b/arch/powerpc/cpu/mpc85xx/t1040_serdes.c
+@@ -40,7 +40,7 @@ static u8 serdes_cfg_tbl[][SRDS_MAX_LANES] = {
+ 	[0x8D] = {PCIE1, SGMII_SW1_MAC3, SGMII_SW1_MAC1, SGMII_SW1_MAC2,
+ 		PCIE2, SGMII_SW1_MAC6, SGMII_SW1_MAC4, SGMII_SW1_MAC5},
+ 	[0x8E] = {PCIE1, SGMII_FM1_DTSEC3, SGMII_FM1_DTSEC1, SGMII_FM1_DTSEC2,
+-		AURORA, PCIE2, SGMII_FM1_DTSEC4, SATA1},
++		AURORA, PCIE3, SGMII_FM1_DTSEC4, SATA1},
+ 	[0x8F] = {PCIE1, SGMII_FM1_DTSEC3, SGMII_FM1_DTSEC1, SGMII_FM1_DTSEC2,
+ 		AURORA, NONE, SGMII_FM1_DTSEC4, SGMII_FM1_DTSEC5},
+ 	[0xA5] = {PCIE1, SGMII_FM1_DTSEC3, SGMII_FM1_DTSEC1, SGMII_FM1_DTSEC2,
+-- 
+1.9.1
+
