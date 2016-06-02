@@ -56,11 +56,10 @@ do_compile_prepend() {
 	printf "%s" "${LOCALVERSION}" > ${B}/.scmversion
 }
 
-
 FILESEXTRAPATHS_prepend := "${THISDIR}/u-boot-tqmt104x_v2015.07:"
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-g70ad811"
+LOCALVERSION = "-g82a0f21"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -79,3 +78,7 @@ SRC_URI += "file://0015-corrected-typo-introduced-in-commit-222a655dd50c826e.pat
 SRC_URI += "file://0016-TQMT1042-add-automatic-feature-to-reprogram-the-serd.patch"
 SRC_URI += "file://0017-u-boot-mpc85xx-u-boot-.lds-remove-_GLOBAL_OFFSET_TAB.patch"
 SRC_URI += "file://0018-add-fgnu89-inline-option-for-gcc5.patch"
+SRC_URI += "file://0019-Modified-mkimage-to-build-RCW-binaries.patch"
+SRC_URI += "file://0020-Added-RCW-mkimage-defines-for-NOR-flash-boot.patch"
+SRC_URI += "file://0021-TQMT1042-set-88E1340-phy-reset-duration-to-10ms-inst.patch"
+SRC_URI += "file://0022-TQMT1042-introduce-RCWs-for-Serdes-configurations-0x.patch"

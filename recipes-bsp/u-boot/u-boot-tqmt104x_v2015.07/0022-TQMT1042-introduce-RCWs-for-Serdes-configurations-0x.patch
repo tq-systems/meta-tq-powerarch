@@ -1,0 +1,114 @@
+From 82a0f211b8a24e1e919c0dbc257fded0995692f2 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 2 Jun 2016 14:57:17 +0200
+Subject: [PATCH] TQMT1042: introduce RCWs for Serdes configurations 0x86 and
+ 0x88
+
+Two basic RCWs are implemented for TQMT1042 Serdes configurations 0x86 and 0x88.
+These can be selected via menuconfig.
+If nothing is selected via menuconfig, serdes configuration 0x86 is selected as the standard RCW.
+---
+ board/tqc/tqmt1042/Kconfig                   | 22 ++++++++++++++++++++++
+ board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg |  7 +++++++
+ board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg |  7 +++++++
+ include/configs/TQMT1042.h                   | 11 +++++++++--
+ 4 files changed, 45 insertions(+), 2 deletions(-)
+ create mode 100644 board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg
+ create mode 100644 board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg
+
+diff --git a/board/tqc/tqmt1042/Kconfig b/board/tqc/tqmt1042/Kconfig
+index f089cea..d2926f5 100644
+--- a/board/tqc/tqmt1042/Kconfig
++++ b/board/tqc/tqmt1042/Kconfig
+@@ -9,4 +9,26 @@ config SYS_VENDOR
+ config SYS_CONFIG_NAME
+ 	default "TQMT1042"
+ 
++choice
++	prompt "TQMT1042 RCW configuration file"
++	default TQMT1042_RCW_CFG_SERDES86
++	help
++	  select the RCW configuration file to be used for TQMT1042
++
++config TQMT1042_RCW_CFG_SERDES86
++	bool "RCW configuration for SERDES mode = 86, default RCW configuration"
++	help
++	  Select SERDES mode = 86 in reset configuration word.
++
++config TQMT1042_RCW_CFG_SERDES88
++	bool "RCW configuration for SERDES mode = 88"
++	help
++	  Select SERDES mode = 88 in reset configuration word.
++
++endchoice
++
++config SYS_FSL_RCW
++	string
++	default "board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg" if TQMT1042_RCW_CFG_SERDES86
++	default "board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg" if TQMT1042_RCW_CFG_SERDES88
+ endif
+diff --git a/board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg b/board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg
+new file mode 100644
+index 0000000..d3b4fdb
+--- /dev/null
++++ b/board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg
+@@ -0,0 +1,7 @@
++#PBL preamble and RCW header
++aa55aa55 010e0100
++# serdes protocol 0x86
++0c10000e 0e000000 00000000 00000000
++86000000 00000001 ec027000 01000000
++00000000 00000000 00000000 0002a800
++00000000 01565005 00000000 00000000
+diff --git a/board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg b/board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg
+new file mode 100644
+index 0000000..360e4b5
+--- /dev/null
++++ b/board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg
+@@ -0,0 +1,7 @@
++#PBL preamble and RCW header
++aa55aa55 010e0100
++# serdes protocol 0x86
++0c10000e 0e000000 00000000 00000000
++88000000 00000001 ec027000 01000000
++00000000 00000000 00000000 0002a800
++00000000 01565005 00000000 00000000
+diff --git a/include/configs/TQMT1042.h b/include/configs/TQMT1042.h
+index 3b0034d..79c0b92 100644
+--- a/include/configs/TQMT1042.h
++++ b/include/configs/TQMT1042.h
+@@ -7,6 +7,9 @@
+ #ifndef __CONFIG_H
+ #define __CONFIG_H
+ 
++
++#include <linux/kconfig.h>
++
+ #undef DEBUG
+ /*
+  * TQMT1042 board configuration file
+@@ -22,7 +25,7 @@
+ 
+ #ifdef CONFIG_RAMBOOT_PBL
+ #define CONFIG_SYS_FSL_PBL_PBI $(SRCTREE)/board/tqc/tqmt1042/tqmt1042_pbi.cfg
+-#define CONFIG_SYS_FSL_PBL_RCW $(SRCTREE)/board/tqc/tqmt1042/tqmt1042_rcw.cfg
++#define CONFIG_SYS_FSL_PBL_RCW CONFIG_SYS_FSL_RCW /* use same configuration for RAMBOOT and NOR boot */
+ 
+ #define CONFIG_SPL_MPC8XXX_INIT_DDR_SUPPORT
+ #define CONFIG_SPL_ENV_SUPPORT
+@@ -63,7 +66,11 @@
+ #endif
+ #else
+ #define CONFIG_FSL_RCW_BIN
+-#define CONFIG_SYS_FSL_RCW $(SRCTREE)/board/tqc/tqmt1042/tqmt1042_rcw.cfg
++
++#ifndef CONFIG_SYS_FSL_RCW
++#error "RCW configuration file not selected (CONFIG_SYS_FSL_RCW not defined)!!!"
++#endif
++
+ #endif
+ 
+ /* High Level Configuration Options */
+-- 
+1.9.1
+
