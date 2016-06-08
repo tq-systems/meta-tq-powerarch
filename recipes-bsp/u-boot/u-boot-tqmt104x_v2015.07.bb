@@ -59,7 +59,7 @@ do_compile_prepend() {
 FILESEXTRAPATHS_prepend := "${THISDIR}/u-boot-tqmt104x_v2015.07:"
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-g82a0f21"
+LOCALVERSION = "-g21f7dcd"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -82,3 +82,4 @@ SRC_URI += "file://0019-Modified-mkimage-to-build-RCW-binaries.patch"
 SRC_URI += "file://0020-Added-RCW-mkimage-defines-for-NOR-flash-boot.patch"
 SRC_URI += "file://0021-TQMT1042-set-88E1340-phy-reset-duration-to-10ms-inst.patch"
 SRC_URI += "file://0022-TQMT1042-introduce-RCWs-for-Serdes-configurations-0x.patch"
+SRC_URI += "file://0023-fsl_rcw.bin-Fix-stand-alone-build.patch"
