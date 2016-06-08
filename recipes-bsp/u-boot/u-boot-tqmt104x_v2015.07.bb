@@ -47,6 +47,23 @@ do_patch() {
 	done
 }
 
+do_configure_prepend() {
+        printf "Append RCW selection to _defconfig (CONFIG_SYS_FSL_RCW)\n"
+        printf "FSL_RCW: "
+        echo ${FSL_RCW}
+        if [ "${FSL_RCW}" = "SERDES88" ]; then
+                # change RCW in U-Boot to SERDES88
+                printf "Configuration SERDES88 selected\n"
+                sed -i '/RCW_CFG/d' ${S}/configs/TQMT1042_defconfig
+                echo "CONFIG_TQMT1042_RCW_CFG_SERDES88=y" >> ${S}/configs/TQMT1042_defconfig
+        else
+                # change RCW in U-Boot to SERDES86 (default)
+                printf "Configuration SERDES86 (default) selected\n"
+                sed -i '/RCW_CFG/d' ${S}/configs/TQMT1042_defconfig
+                echo "CONFIG_TQMT1042_RCW_CFG_SERDES86=y" >> ${S}/configs/TQMT1042_defconfig
+        fi
+}
+
 do_compile_prepend() {
 	unset LDFLAGS
 	unset CFLAGS
@@ -54,6 +71,11 @@ do_compile_prepend() {
 
 	printf "%s" "${LOCALVERSION}" > ${S}/.scmversion
 	printf "%s" "${LOCALVERSION}" > ${B}/.scmversion
+}
+
+do_deploy () {
+    install -d ${DEPLOYDIR}/rcw
+    cp -r ${S}/TQMT1042_defconfig/fsl_rcw.bin ${DEPLOYDIR}/rcw/
 }
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/u-boot-tqmt104x_v2015.07:"
