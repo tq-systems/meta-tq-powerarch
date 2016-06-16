@@ -1,0 +1,59 @@
+From 135456993595c454638bd338aa2fbb2fabc974fd Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 16 Jun 2016 09:49:09 +0200
+Subject: [PATCH] TQMT1042: remove unneccessary ethernet phy drivers from
+ defconfig
+
+---
+ arch/powerpc/configs/85xx/tqmt1042_64_defconfig | 17 ++++++++---------
+ arch/powerpc/configs/85xx/tqmt1042_defconfig    |  2 +-
+ 2 files changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/arch/powerpc/configs/85xx/tqmt1042_64_defconfig b/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
+index 76f98c9..7ccee7d 100644
+--- a/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
++++ b/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
+@@ -1337,19 +1337,18 @@ CONFIG_PHYLIB=y
+ #
+ # MII PHY device drivers
+ #
+-CONFIG_AQUANTIA_PHY=y
+-CONFIG_AT803X_PHY=y
++# CONFIG_AQUANTIA_PHY is not set
++# CONFIG_AT803X_PHY is not set
+ # CONFIG_AMD_PHY is not set
+-CONFIG_MARVELL_PHY=y
+-CONFIG_DAVICOM_PHY=y
++# CONFIG_MARVELL_PHY is not set
++# CONFIG_DAVICOM_PHY is not set
+ # CONFIG_QSEMI_PHY is not set
+ # CONFIG_LXT_PHY is not set
+-CONFIG_CICADA_PHY=y
+-CONFIG_VITESSE_PHY=y
+-CONFIG_TERANETICS_PHY=y
++# CONFIG_CICADA_PHY is not set
++# CONFIG_VITESSE_PHY is not set
++# CONFIG_TERANETICS_PHY is not set
+ # CONFIG_SMSC_PHY is not set
+-CONFIG_BCM_NET_PHYLIB=y
+-CONFIG_BROADCOM_PHY=y
++# CONFIG_BROADCOM_PHY is not set
+ # CONFIG_BCM7XXX_PHY is not set
+ # CONFIG_BCM87XX_PHY is not set
+ # CONFIG_ICPLUS_PHY is not set
+diff --git a/arch/powerpc/configs/85xx/tqmt1042_defconfig b/arch/powerpc/configs/85xx/tqmt1042_defconfig
+index 64b8392..f2077dc 100644
+--- a/arch/powerpc/configs/85xx/tqmt1042_defconfig
++++ b/arch/powerpc/configs/85xx/tqmt1042_defconfig
+@@ -1350,7 +1350,7 @@ CONFIG_AT803X_PHY=y
+ # CONFIG_QSEMI_PHY is not set
+ # CONFIG_LXT_PHY is not set
+ # CONFIG_CICADA_PHY is not set
+-CONFIG_VITESSE_PHY=y
++# CONFIG_VITESSE_PHY is not set
+ # CONFIG_TERANETICS_PHY is not set
+ # CONFIG_SMSC_PHY is not set
+ # CONFIG_BROADCOM_PHY is not set
+-- 
+1.9.1
+

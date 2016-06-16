@@ -43,7 +43,7 @@ do_configure_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION .= "-gfc70f25"
+LOCALVERSION .= "-g1354569"
 SRC_URI += "file://0001-fsl-fman-Add-FMan-MURAM-support.patch"
 SRC_URI += "file://0002-fsl-fman-Add-FMan-support.patch"
 SRC_URI += "file://0003-fsl-fman-Add-FMan-MAC-support.patch"
@@ -152,3 +152,8 @@ SRC_URI += "file://0105-powerpc-mpc85xx-Add-hotplug-support-on-E5500-and-E50.pat
 SRC_URI += "file://0106-applied-1b04a533afe20f851d372d58c907aafbb7d6589b-fro.patch"
 SRC_URI += "file://0107-update-TQMT1042-defconfig-to-current-state-of-develo.patch"
 SRC_URI += "file://0108-TQMT1042-defconfig-Add-defconfig-for-64-bit-mode.patch"
+SRC_URI += "file://0109-phy-dp83867-Make-rgmii-parameters-optional.patch"
+SRC_URI += "file://0110-phy-dp83867-Fix-compilation-with-CONFIG_OF_MDIO-m.patch"
+SRC_URI += "file://0111-TQMT1042-add-proper-NOR-Flash-partition-table.patch"
+SRC_URI += "file://0112-TQMT1042-cleanup-and-correct-ethernet-device-tree-no.patch"
+SRC_URI += "file://0113-TQMT1042-remove-unneccessary-ethernet-phy-drivers-fr.patch"
