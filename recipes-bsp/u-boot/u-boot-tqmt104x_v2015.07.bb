@@ -73,7 +73,7 @@ do_compile_prepend() {
 	printf "%s" "${LOCALVERSION}" > ${B}/.scmversion
 }
 
-do_deploy () {
+do_deploy_append() {
     install -d ${DEPLOYDIR}/rcw
     cp -r ${S}/TQMT1042_defconfig/fsl_rcw.bin ${DEPLOYDIR}/rcw/
 }
