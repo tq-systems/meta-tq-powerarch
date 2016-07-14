@@ -76,6 +76,9 @@ do_compile_prepend() {
 do_deploy_append() {
     install -d ${DEPLOYDIR}/rcw
     cp -r ${S}/TQMT1042_defconfig/fsl_rcw.bin ${DEPLOYDIR}/rcw/
+    cp  ${S}/TQMT1042_SDCARD_defconfig/u-boot-with-spl-pbl.bin ${DEPLOYDIR}
+    ln -srf ${DEPLOYDIR}/u-boot-with-spl-pbl.bin ./u-boot.bin-sdcard
+    ln -srf ${DEPLOYDIR}/u-boot-with-spl-pbl.bin ./u-boot-tqmt1042-64b-stk.bin-sdcard
 }
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/u-boot-tqmt104x_v2015.07:"
