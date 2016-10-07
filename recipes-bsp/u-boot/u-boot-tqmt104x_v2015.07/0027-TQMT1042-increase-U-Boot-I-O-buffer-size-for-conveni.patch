@@ -1,0 +1,25 @@
+From 233fa19d5949973d3e9377683c98067557163ad9 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 18 Aug 2016 12:04:22 +0200
+Subject: [PATCH] TQMT1042: increase U-Boot I/O buffer size for convenience
+
+---
+ include/configs/TQMT1042.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/configs/TQMT1042.h b/include/configs/TQMT1042.h
+index 65b495a..313c189 100644
+--- a/include/configs/TQMT1042.h
++++ b/include/configs/TQMT1042.h
+@@ -580,7 +580,7 @@
+ #ifdef CONFIG_CMD_KGDB
+ #define CONFIG_SYS_CBSIZE	1024		/* Console I/O Buffer Size */
+ #else
+-#define CONFIG_SYS_CBSIZE	256		/* Console I/O Buffer Size */
++#define CONFIG_SYS_CBSIZE	1024		/* Console I/O Buffer Size */
+ #endif
+ #define CONFIG_SYS_PBSIZE (CONFIG_SYS_CBSIZE+sizeof(CONFIG_SYS_PROMPT)+16)
+ #define CONFIG_SYS_MAXARGS	16		/* max number of command args */
+-- 
+1.9.1
+
