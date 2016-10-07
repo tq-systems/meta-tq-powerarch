@@ -38,6 +38,8 @@ python () {
 
 WRAP_TARGET_PREFIX ?= "${TARGET_PREFIX}"
 
+UBOOT_MAKE_TARGET_append = "${@d.getVar('FSL_RCW', True) and ' fsl_rcw.bin' or ''}"
+
 EXTRA_OEMAKE = 'CROSS_COMPILE=${WRAP_TARGET_PREFIX} CC="${WRAP_TARGET_PREFIX}gcc ${TOOLCHAIN_OPTIONS}"'
 
 do_patch() {
@@ -48,20 +50,12 @@ do_patch() {
 }
 
 do_configure_prepend() {
-        printf "Append RCW selection to _defconfig (CONFIG_SYS_FSL_RCW)\n"
-        printf "FSL_RCW: "
-        echo ${FSL_RCW}
-        if [ "${FSL_RCW}" = "SERDES88" ]; then
-                # change RCW in U-Boot to SERDES88
-                printf "Configuration SERDES88 selected\n"
-                sed -i '/RCW_CFG/d' ${S}/configs/TQMT1042_defconfig
-                echo "CONFIG_TQMT1042_RCW_CFG_SERDES88=y" >> ${S}/configs/TQMT1042_defconfig
-        else
-                # change RCW in U-Boot to SERDES86 (default)
-                printf "Configuration SERDES86 (default) selected\n"
-                sed -i '/RCW_CFG/d' ${S}/configs/TQMT1042_defconfig
-                echo "CONFIG_TQMT1042_RCW_CFG_SERDES86=y" >> ${S}/configs/TQMT1042_defconfig
-        fi
+	if [ "x${UBOOT_CONFIG}" != "x" ] && [ "x${FSL_RCW}" != "x" ]; then
+		for config in ${UBOOT_MACHINE}; do
+			sed -i '/CONFIG_RCW_CFG/d' ${S}/configs/${config}
+			echo "CONFIG_RCW_CFG_${FSL_RCW}=y" >> ${S}/configs/${config}
+		done
+	fi
 }
 
 do_compile_prepend() {
@@ -74,11 +68,37 @@ do_compile_prepend() {
 }
 
 do_deploy_append() {
-    install -d ${DEPLOYDIR}/rcw
-    cp -r ${S}/TQMT1042_defconfig/fsl_rcw.bin ${DEPLOYDIR}/rcw/
-    cp  ${S}/TQMT1042_SDCARD_defconfig/u-boot-with-spl-pbl.bin ${DEPLOYDIR}
-    ln -srf ${DEPLOYDIR}/u-boot-with-spl-pbl.bin ./u-boot.bin-sdcard
-    ln -srf ${DEPLOYDIR}/u-boot-with-spl-pbl.bin ./u-boot-tqmt1042-64b-stk.bin-sdcard
+	# For sdcard boot, we don't use u-boot.bin, but u-boot-with-spl-pbl.bin
+	if [ "x${UBOOT_CONFIG}" != "x" ]; then
+		for config in ${UBOOT_MACHINE}; do
+			i=`expr $i + 1`;
+			for type in ${UBOOT_CONFIG}; do
+				j=`expr $j + 1`;
+				if [ $j -eq $i ] && [ "${type}" = "sdcard" ]; then
+					install -d ${DEPLOYDIR}
+					install ${S}/${config}/u-boot-with-spl-pbl.${UBOOT_SUFFIX} ${DEPLOYDIR}/u-boot-${type}-${PV}-${PR}.${UBOOT_SUFFIX}
+				fi
+			done
+			unset  j
+		done
+		unset  i
+	fi
+
+	# Install RCW
+	if [ "x${UBOOT_CONFIG}" != "x" ] && [ "x${FSL_RCW}" != "x" ]; then
+		for config in ${UBOOT_MACHINE}; do
+			i=`expr $i + 1`;
+			for type in ${UBOOT_CONFIG}; do
+				j=`expr $j + 1`;
+				if [ $j -eq $i ]; then
+					install -d ${DEPLOYDIR}
+					install -v ${S}/${config}/fsl_rcw.bin ${DEPLOYDIR}/fsl_rcw-${type}-${FSL_RCW}.bin
+				fi
+			done
+			unset j
+		done
+		unset i
+	fi
 }
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/u-boot-tqmt104x_v2015.07:"
