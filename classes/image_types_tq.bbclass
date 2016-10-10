@@ -28,7 +28,7 @@ sector_next_primary () {
 
 IMAGE_CMD_sdcard () {
 	if [ -z "${SDCARD_ROOTFS}" ]; then
-		bberror "SDCARD_ROOTFS is undefined. To use mbt21mmc image from MBT2.1 BSP it needs to be defined."
+		bberror "SDCARD_ROOTFS is undefined. To use sdcard image it needs to be defined."
 		exit 1
 	fi
 	if [ ! -e "${SDCARD_ROOTFS}" ]; then
@@ -104,6 +104,6 @@ IMAGE_CMD_sdcard () {
 	dd if=${SDCARD_ROOTFS} of=${SDCARD} conv=notrunc seek=$PART_ROOTFS_OFFSET bs=512
 }
 
-# The mbt21mmc requires the rootfs filesystem to be built before using
+# The sdcard requires the rootfs filesystem to be built before using
 # it so we must make this dependency explicit.
 IMAGE_TYPEDEP_sdcard = "${@d.getVar('SDCARD_ROOTFS', 1).split('.')[-1]}"
