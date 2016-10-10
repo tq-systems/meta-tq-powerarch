@@ -104,7 +104,7 @@ do_deploy_append() {
 FILESEXTRAPATHS_prepend := "${THISDIR}/u-boot-tqmt104x_v2015.07:"
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-g443307b"
+LOCALVERSION = "-ge11b570"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -133,3 +133,4 @@ SRC_URI += "file://0025-remove-old-RCW-cfg-file.patch"
 SRC_URI += "file://0026-set-TQMT1042-default-environment.patch"
 SRC_URI += "file://0027-TQMT1042-increase-U-Boot-I-O-buffer-size-for-conveni.patch"
 SRC_URI += "file://0028-cosmetic-TQMT1042-Rename-RCW-configuration-constants.patch"
+SRC_URI += "file://0029-TQMT1042-Add-SD-card-boot-command.patch"
