@@ -1,0 +1,360 @@
+From ecd71055910ed1a62f61dc063c1fe3866d91460e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Konrad=20Gr=C3=A4fe?= <k.graefe@gateware.de>
+Date: Mon, 22 Aug 2016 10:49:12 +0200
+Subject: [PATCH] T104xRDB: dts: Add layer 2 switch
+
+---
+ arch/powerpc/boot/dts/fsl/qoriq-l2switch-0.dtsi | 93 +++++++++++++++++++++++++
+ arch/powerpc/boot/dts/fsl/t1040rdb.dts          | 67 ++++++++++++++++++
+ arch/powerpc/boot/dts/fsl/t1040si-post.dtsi     | 76 ++++++++++++++++++++
+ arch/powerpc/boot/dts/fsl/t1042rdb.dts          | 69 ++++++++++++++++++
+ 4 files changed, 305 insertions(+)
+ create mode 100644 arch/powerpc/boot/dts/fsl/qoriq-l2switch-0.dtsi
+
+diff --git a/arch/powerpc/boot/dts/fsl/qoriq-l2switch-0.dtsi b/arch/powerpc/boot/dts/fsl/qoriq-l2switch-0.dtsi
+new file mode 100644
+index 0000000..9a23db2
+--- /dev/null
++++ b/arch/powerpc/boot/dts/fsl/qoriq-l2switch-0.dtsi
+@@ -0,0 +1,93 @@
++/*
++ * T1040 Silicon/SoC L2switch device tree stub [ controller @ offset 0x800000 ]
++ *
++ * Copyright 2013 Freescale Semiconductor Inc.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *     * Redistributions of source code must retain the above copyright
++ *       notice, this list of conditions and the following disclaimer.
++ *     * Redistributions in binary form must reproduce the above copyright
++ *       notice, this list of conditions and the following disclaimer in the
++ *       documentation and/or other materials provided with the distribution.
++ *     * Neither the name of Freescale Semiconductor nor the
++ *       names of its contributors may be used to endorse or promote products
++ *       derived from this software without specific prior written permission.
++ *
++ *
++ * ALTERNATIVELY, this software may be distributed under the terms of the
++ * GNU General Public License ("GPL") as published by the Free Software
++ * Foundation, either version 2 of that License or (at your option) any
++ * later version.
++ *
++ * THIS SOFTWARE IS PROVIDED BY Freescale Semiconductor ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ * DISCLAIMED. IN NO EVENT SHALL Freescale Semiconductor BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++l2switch: l2switch@800000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		compatible = "vitesse-9953";
++		clock-frequency = <0>;
++
++		reg = <0x800000 0x290000>;
++
++		port@100000 {
++			compatible = "vitesse-9953-port";
++			port-index = <0>;
++		};
++
++		port@110000 {
++			compatible = "vitesse-9953-port";
++			port-index = <1>;
++		};
++
++		port@120000 {
++			compatible = "vitesse-9953-port";
++			port-index = <2>;
++		};
++
++		port@130000 {
++			compatible = "vitesse-9953-port";
++			port-index = <3>;
++		};
++
++		port@140000 {
++			compatible = "vitesse-9953-port";
++			port-index = <4>;
++		};
++
++		port@150000 {
++			compatible = "vitesse-9953-port";
++			port-index = <5>;
++		};
++
++		port@160000 {
++			compatible = "vitesse-9953-port";
++			port-index = <6>;
++		};
++
++		port@170000 {
++			compatible = "vitesse-9953-port";
++			port-index = <7>;
++		};
++
++		port@180000 {
++			compatible = "vitesse-9953-port";
++			port-index = <8>;
++		};
++
++		port@190000 {
++			compatible = "vitesse-9953-port";
++			port-index = <9>;
++		};
++	};
+diff --git a/arch/powerpc/boot/dts/fsl/t1040rdb.dts b/arch/powerpc/boot/dts/fsl/t1040rdb.dts
+index 621f2c6..82775c8 100644
+--- a/arch/powerpc/boot/dts/fsl/t1040rdb.dts
++++ b/arch/powerpc/boot/dts/fsl/t1040rdb.dts
+@@ -64,6 +64,73 @@
+ 				phy_sgmii_2: ethernet-phy@03 {
+ 					reg = <0x03>;
+ 				};
++				phy_qsgmii_0: ethernet-phy@04 {
++					reg = <0x04>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_1: ethernet-phy@05 {
++					reg = <0x05>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_2: ethernet-phy@06 {
++					reg = <0x06>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_3: ethernet-phy@07 {
++					reg = <0x07>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_4: ethernet-phy@08 {
++					reg = <0x08>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_5: ethernet-phy@09 {
++					reg = <0x09>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_6: ethernet-phy@0a {
++					reg = <0x0a>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_7: ethernet-phy@0b {
++					reg = <0x0b>;
++					interrupts = <0 1 0 0>;
++				};
++			};
++		};
++
++		l2switch@800000 {
++			port@100000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_0>;
++			};
++			port@110000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_1>;
++			};
++			port@120000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_2>;
++			};
++			port@130000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_3>;
++			};
++			port@140000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_4>;
++			};
++			port@150000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_5>;
++			};
++			port@160000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_6>;
++			};
++			port@170000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_7>;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/powerpc/boot/dts/fsl/t1040si-post.dtsi b/arch/powerpc/boot/dts/fsl/t1040si-post.dtsi
+index 9d5d1d2..5a52d7f 100644
+--- a/arch/powerpc/boot/dts/fsl/t1040si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/t1040si-post.dtsi
+@@ -638,4 +638,80 @@
+ 			status = "disabled";
+ 		};
+ 	};
++
++	/include/ "qoriq-l2switch-0.dtsi"
++	l2switch@800000 {
++		interrupts = <26 2 0 0>;
++
++		port@100000 {
++			tbi-handle = <&swtbi4>;
++		};
++		port@110000 {
++			tbi-handle = <&swtbi5>;
++		};
++		port@120000 {
++			tbi-handle = <&swtbi6>;
++		};
++		port@130000 {
++			tbi-handle = <&swtbi7>;
++		};
++		port@140000 {
++			tbi-handle = <&swtbi8>;
++		};
++		port@150000 {
++			tbi-handle = <&swtbi9>;
++		};
++		port@160000 {
++			tbi-handle = <&swtbi10>;
++		};
++		port@170000 {
++			tbi-handle = <&swtbi11>;
++		};
++		port@180000 {
++			fixed-link = <2 1 2500 0 0>;
++			phy-connection-type = "sgmii";
++		};
++		port@190000 {
++			fixed-link = <3 1 2500 0 0>;
++			phy-connection-type = "sgmii";
++		};
++
++		mdio@700ac {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "vitesse-9953-mdio";
++			swtbi4: tbi-phy@4 {
++				reg = <0x4>;
++				device_type = "tbi-phy";
++			};
++			swtbi5: tbi-phy@5 {
++				reg = <0x5>;
++				device_type = "tbi-phy";
++			};
++			swtbi6: tbi-phy@6 {
++				reg = <0x6>;
++				device_type = "tbi-phy";
++			};
++			swtbi7: tbi-phy@7 {
++				reg = <0x7>;
++				device_type = "tbi-phy";
++			};
++			swtbi8: tbi-phy@8 {
++				reg = <0x8>;
++				device_type = "tbi-phy";
++			};
++			swtbi9: tbi-phy@9 {
++				reg = <0x9>;
++				device_type = "tbi-phy";
++			};
++			swtbi10: tbi-phy@a {
++				reg = <0xa>;
++				device_type = "tbi-phy";
++			};
++			swtbi11: tbi-phy@b {
++				reg = <0xb>;
++				device_type = "tbi-phy";
++			};
++		};
++	};
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/t1042rdb.dts b/arch/powerpc/boot/dts/fsl/t1042rdb.dts
+index 2c13862..1ca8789 100644
+--- a/arch/powerpc/boot/dts/fsl/t1042rdb.dts
++++ b/arch/powerpc/boot/dts/fsl/t1042rdb.dts
+@@ -62,8 +62,77 @@
+ 				phy_sgmii_2: ethernet-phy@03 {
+ 					reg = <0x03>;
+ 				};
++
++				phy_qsgmii_0: ethernet-phy@08 {
++					reg = <0x08>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_1: ethernet-phy@09 {
++					reg = <0x09>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_2: ethernet-phy@0a {
++					reg = <0x0a>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_3: ethernet-phy@0b {
++					reg = <0x0b>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_4: ethernet-phy@0c {
++					reg = <0x0c>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_5: ethernet-phy@0d {
++					reg = <0x0d>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_6: ethernet-phy@0e {
++					reg = <0x0e>;
++					interrupts = <0 1 0 0>;
++				};
++				phy_qsgmii_7: ethernet-phy@0f {
++					reg = <0x0f>;
++					interrupts = <0 1 0 0>;
++				};
++			};
++		};
++
++		l2switch: l2switch@800000 {
++			port@100000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_0>;
++			};
++			port@110000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_1>;
++			};
++			port@120000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_2>;
++			};
++			port@130000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_3>;
++			};
++			port@140000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_4>;
++			};
++			port@150000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_5>;
++			};
++			port@160000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_6>;
++			};
++			port@170000 {
++				phy-connection-type = "qsgmii";
++				phy-handle = <&phy_qsgmii_7>;
+ 			};
+ 		};
++
+ 	};
+ 
+ 	ifc: localbus@ffe124000 {
+-- 
+1.9.1
+
