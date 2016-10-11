@@ -1,5 +1,8 @@
 inherit image_types
 
+
+### SDCARD image ###
+
 # Set alignment to 4MB [in KiB]
 IMAGE_ROOTFS_ALIGNMENT = "4096"
 
@@ -17,6 +20,7 @@ IMAGE_DEPENDS_sdcard = " \
 
 SDCARD = "${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.sdcard"
 UBOOT_SUFFIX_SDCARD ?= "bin-sdcard"
+UBOOT_SUFFIX_NOR ?= "bin"
 
 sector_add_kiB () {
 	sector_size=512
@@ -107,3 +111,101 @@ IMAGE_CMD_sdcard () {
 # The sdcard requires the rootfs filesystem to be built before using
 # it so we must make this dependency explicit.
 IMAGE_TYPEDEP_sdcard = "${@d.getVar('SDCARD_ROOTFS', 1).split('.')[-1]}"
+
+
+### NOR image ###
+#
+# NOR partitions:
+# Start        Size                  Description
+# 0x00000000   0x00020000 (64KiB)    Reset Configuration Word
+# 0x00020000   0x00800000 (8MiB)     Linux kernel image
+# 0x00820000   0x00020000 (64KiB)    Linux device tree blob
+# 0x00840000   0x04000000 (64MiB)    RootFS
+# 0x04840000   0x03600000 (54MiB)    Spare partition
+# 0x07f00000   0x00020000 (64KiB)    Frame manager microcode and QUICC engine microcode
+# 0x07f20000   0x00020000 (64KiB)    U-Boot environment
+# 0x07f40000   0x000c0000 (768Kib)   U-Boot image
+
+NOR_IMAGE = "${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.nor"
+
+IMAGE_DEPENDS_nor = " \
+	virtual/kernel:do_deploy \
+	u-boot:do_deploy \
+	fm-ucode:do_deploy \
+"
+
+nor_burn_file () {
+	# Hex to dec
+	OFFSET=$(printf "%d" $2)
+	MAX_FILE_SIZE=$(printf "%d" $3)
+
+	FILE_SIZE=$(stat -c '%s' "$1")
+	if [ $FILE_SIZE -gt $MAX_FILE_SIZE ]; then
+		bberror "File $1 does not fit into partition!"
+		exit 1
+	fi
+
+	OFFSET_KB=$(expr $OFFSET / 1024 ) || true
+
+	dd if="$1" of=${NOR_IMAGE}  conv=notrunc bs=1024 seek=$OFFSET_KB
+}
+IMAGE_CMD_nor () {
+	NOR_IMAGE_SIZE="131072" # 128MiB [in KiB]
+
+	if [ -z "${NOR_ROOTFS}" ]; then
+		bberror "NOR_ROOTFS is not set! Aborting."
+		exit 1
+	fi
+	if [ ! -e "${NOR_ROOTFS}" ]; then
+		bberror "${NOR_ROOTFS} does not exist! Aborting."
+		exit 1
+	fi
+
+	# Initialize sparse file
+	dd if=/dev/zero of=${NOR_IMAGE} bs=1024 count=0 seek=${NOR_IMAGE_SIZE}
+
+	# Burn RCW
+	nor_burn_file \
+		"${DEPLOY_DIR_IMAGE}/fsl_rcw-nor-${FSL_RCW}.bin" \
+		0x00000000 0x00020000
+
+	# Burn Linux kernel image
+	nor_burn_file \
+		"${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${MACHINE}.bin" \
+		0x00020000 0x00800000
+
+	# Burn Linux device tree blob
+	if test -n "${KERNEL_DEVICETREE}"; then
+		for DTS_FILE in ${KERNEL_DEVICETREE}; do
+			DTS_BASE_NAME=$(basename ${DTS_FILE} | awk -F "." '{print $1}')
+			if [ -e "${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtb" ]; then
+				kernel_bin="$(readlink ${KERNEL_IMAGETYPE}-${MACHINE}.bin)"
+				kernel_bin_for_dtb="$(readlink ${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtb \
+					| sed "s,$DTS_BASE_NAME,${MACHINE},g;s,\.dtb$,.bin,g" \
+				)"
+				if [ $kernel_bin = $kernel_bin_for_dtb ]; then
+					nor_burn_file \
+						"${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtb" \
+						0x00820000 0x00020000
+				fi
+			fi
+		done
+	fi
+
+	# Burn RootFS
+	nor_burn_file \
+		"${NOR_ROOTFS}" \
+		0x00840000 0x04000000
+
+	# Burn Frame manager microcode
+	# TODO: QUICC engine microcode
+	nor_burn_file \
+		"${DEPLOY_DIR_IMAGE}/${FSL_FMAN_UCODE}" \
+		0x07f00000 0x00020000
+
+	# Burn U-Boot image
+	nor_burn_file \
+		"${DEPLOY_DIR_IMAGE}/u-boot-${MACHINE}.${UBOOT_SUFFIX_NOR}" \
+		0x07f40000 0x000c0000
+}
+IMAGE_TYPEDEP_nor = "${@d.getVar('NOR_ROOTFS', 1).split('.')[-1]}"
