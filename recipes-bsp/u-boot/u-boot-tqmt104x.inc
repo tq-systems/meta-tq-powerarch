@@ -29,7 +29,7 @@ do_compile_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-ge11b570"
+LOCALVERSION = "-g1492568"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -59,3 +59,4 @@ SRC_URI += "file://0026-set-TQMT1042-default-environment.patch"
 SRC_URI += "file://0027-TQMT1042-increase-U-Boot-I-O-buffer-size-for-conveni.patch"
 SRC_URI += "file://0028-cosmetic-TQMT1042-Rename-RCW-configuration-constants.patch"
 SRC_URI += "file://0029-TQMT1042-Add-SD-card-boot-command.patch"
+SRC_URI += "file://0030-TQMT1042-Add-NOR-boot-command.patch"
