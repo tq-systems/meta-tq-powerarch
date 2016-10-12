@@ -43,7 +43,7 @@ do_configure_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION .= "-gc1a45f1"
+LOCALVERSION .= "-gc9067ac"
 SRC_URI += "file://0001-fsl-fman-Add-FMan-MURAM-support.patch"
 SRC_URI += "file://0002-fsl-fman-Add-FMan-support.patch"
 SRC_URI += "file://0003-fsl-fman-Add-FMan-MAC-support.patch"
@@ -173,3 +173,5 @@ SRC_URI += "file://0126-85xx-tqmt1042_64_defconfig-Change-all-modules-to-be-.pat
 SRC_URI += "file://0127-phy-Add-phydev_err-and-phydev_dbg-macros.patch"
 SRC_URI += "file://0128-Revert-Revert-phy-dp83867-Make-rgmii-parameters-opti.patch"
 SRC_URI += "file://0129-tqmt1042.dts-Fix-NOR-partition-table.patch"
+SRC_URI += "file://0130-tqmt1042.dts-add-descirptive-commentary-and-minor-co.patch"
+SRC_URI += "file://0131-TQMT1042-add-new-device-tree-variant-tqmt1042_serdes.patch"
