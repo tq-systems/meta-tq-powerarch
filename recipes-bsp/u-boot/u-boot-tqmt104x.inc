@@ -29,7 +29,7 @@ do_compile_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-g1492568"
+LOCALVERSION = "-g69ca8d8"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -60,3 +60,10 @@ SRC_URI += "file://0027-TQMT1042-increase-U-Boot-I-O-buffer-size-for-conveni.pat
 SRC_URI += "file://0028-cosmetic-TQMT1042-Rename-RCW-configuration-constants.patch"
 SRC_URI += "file://0029-TQMT1042-Add-SD-card-boot-command.patch"
 SRC_URI += "file://0030-TQMT1042-Add-NOR-boot-command.patch"
+SRC_URI += "file://0031-cosmetic-TQMT1042-tqmt1042.c-split-comment-into-two-.patch"
+SRC_URI += "file://0032-TQMT1042-Set-MAC-GTX-Clock-to-be-always-provided-by-.patch"
+SRC_URI += "file://0033-cosmetic-TQMT1042-tqmt1042.h-move-comment-to-seperat.patch"
+SRC_URI += "file://0034-TQMT1040-automatic-reprogramming-of-ethernet-phy-if-.patch"
+SRC_URI += "file://0035-cosmetic-TQMT1042-eth.c-minor-edit-of-commentary-for.patch"
+SRC_URI += "file://0036-TQMT1042-corrected-error-in-reset-configuration-word.patch"
+SRC_URI += "file://0037-TQMT1042-add-reset-configuration-word-for-SerDes-con.patch"

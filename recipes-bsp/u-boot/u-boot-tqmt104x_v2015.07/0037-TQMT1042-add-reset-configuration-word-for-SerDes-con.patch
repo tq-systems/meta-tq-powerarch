@@ -1,0 +1,54 @@
+From 69ca8d895672a8fe8a1d3b08df5239c33a2922ad Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 12 Oct 2016 13:48:10 +0200
+Subject: [PATCH] TQMT1042: add reset configuration word for SerDes
+ configuration 0x8E
+
+Add new reset configuration word (RCW) for SerDes configuration 0x8E.
+Multiple SerDes configurations are possible in combination with the
+STKTxxxx starterkit.
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ board/tqc/tqmt1042/Kconfig                   | 6 ++++++
+ board/tqc/tqmt1042/tqmt1042_serdes8e_rcw.cfg | 7 +++++++
+ 2 files changed, 13 insertions(+)
+ create mode 100644 board/tqc/tqmt1042/tqmt1042_serdes8e_rcw.cfg
+
+diff --git a/board/tqc/tqmt1042/Kconfig b/board/tqc/tqmt1042/Kconfig
+index 95937aa..b088528 100644
+--- a/board/tqc/tqmt1042/Kconfig
++++ b/board/tqc/tqmt1042/Kconfig
+@@ -25,10 +25,16 @@ config RCW_CFG_TQMT1042_SERDES88
+ 	help
+ 	  Select SERDES mode = 88 in reset configuration word.
+ 
++config RCW_CFG_TQMT1042_SERDES8E
++	bool "RCW configuration for SERDES mode = 8E"
++	help
++	  Select SERDES mode = 8E in reset configuration word.
++
+ endchoice
+ 
+ config SYS_FSL_RCW
+ 	string
+ 	default "board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg" if RCW_CFG_TQMT1042_SERDES86
+ 	default "board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg" if RCW_CFG_TQMT1042_SERDES88
++	default "board/tqc/tqmt1042/tqmt1042_serdes8e_rcw.cfg" if RCW_CFG_TQMT1042_SERDES8E
+ endif
+diff --git a/board/tqc/tqmt1042/tqmt1042_serdes8e_rcw.cfg b/board/tqc/tqmt1042/tqmt1042_serdes8e_rcw.cfg
+new file mode 100644
+index 0000000..37c1ea2
+--- /dev/null
++++ b/board/tqc/tqmt1042/tqmt1042_serdes8e_rcw.cfg
+@@ -0,0 +1,7 @@
++#PBL preamble and RCW header
++aa55aa55 010e0100
++# serdes protocol 0x86
++0c10000e 0e000000 00000000 00000000
++8e000000 80000001 ec027000 01000000
++00000000 00000000 00000000 0002a800
++00000000 11fe5005 00000000 00000000
+-- 
+1.9.1
+
