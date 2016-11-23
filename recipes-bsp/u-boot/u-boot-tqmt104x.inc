@@ -29,7 +29,7 @@ do_compile_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-g69ca8d8"
+LOCALVERSION = "-gae23e09"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -67,3 +67,5 @@ SRC_URI += "file://0034-TQMT1040-automatic-reprogramming-of-ethernet-phy-if-.pat
 SRC_URI += "file://0035-cosmetic-TQMT1042-eth.c-minor-edit-of-commentary-for.patch"
 SRC_URI += "file://0036-TQMT1042-corrected-error-in-reset-configuration-word.patch"
 SRC_URI += "file://0037-TQMT1042-add-reset-configuration-word-for-SerDes-con.patch"
+SRC_URI += "file://0038-TQMT104x-add-generic-TQMT104x-Board-Support-for-TQMT.patch"
+SRC_URI += "file://0039-TQMT1040-add-TQMT1040-defconfigs.patch"
