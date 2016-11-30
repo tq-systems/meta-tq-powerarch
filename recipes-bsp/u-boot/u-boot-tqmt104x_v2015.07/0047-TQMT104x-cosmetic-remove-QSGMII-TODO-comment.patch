@@ -1,0 +1,33 @@
+From 7fa5c67e78c653ba129e6e0fabf81affd63696ed Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 30 Nov 2016 12:55:03 +0100
+Subject: [PATCH] TQMT104x: [cosmetic] remove "QSGMII TODO" comment
+
+QSGMII hardware now working
+no further initialisation neccessary
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ board/tqc/tqmt104x/eth.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/board/tqc/tqmt104x/eth.c b/board/tqc/tqmt104x/eth.c
+index 9eb8cd6..f813fdc 100644
+--- a/board/tqc/tqmt104x/eth.c
++++ b/board/tqc/tqmt104x/eth.c
+@@ -219,12 +219,6 @@ int board_eth_init(bd_t *bis)
+ 			fm_info_set_phy_address(i, phy_addr);
+ 			break;
+ 		case PHY_INTERFACE_MODE_QSGMII:
+-			/* QSGMII unsupported on T1042, supported on T1040
+-			 * TODO: QSGMII currently errorous on hardware
+-			 * implement after hardware has been fixed
+-			 * only automatic reprogramming of the phy
+-			 * from SGMII to QSGII
+-			 * has been implemented so far */
+ 			printf("Eth:   configuring FM1_DTSEC%i as QSGMII\n", i+1);
+ 			eth_phy_qsgmii_reprogram = 1;
+ 			fm_info_set_phy_address(i, phy_addr);
+-- 
+1.9.1
+
