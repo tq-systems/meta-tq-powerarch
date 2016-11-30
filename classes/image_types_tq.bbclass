@@ -82,7 +82,8 @@ IMAGE_CMD_sdcard () {
 	BOOT_IMG=${WORKDIR}/boot.vfat
 	dd if=/dev/zero of=$BOOT_IMG bs=1024 count=0 seek=${IMAGE_BOOT_PARTITION_SIZE}
 	mkfs.vfat -n "Boot ${MACHINE}" $BOOT_IMG
-	mcopy -i $BOOT_IMG ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${MACHINE}.bin ::/${KERNEL_IMAGETYPE}
+	mmd -i $BOOT_IMG ::/"boot"
+	mcopy -/ -i $BOOT_IMG ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${MACHINE}.bin ::/"boot"/${KERNEL_IMAGETYPE}-${MACHINE}.bin
 
 	# Copy device tree file
 	if test -n "${KERNEL_DEVICETREE}"; then
@@ -94,7 +95,7 @@ IMAGE_CMD_sdcard () {
 					| sed "s,$DTS_BASE_NAME,${MACHINE},g;s,\.dtb$,.bin,g" \
 				)"
 				if [ $kernel_bin = $kernel_bin_for_dtb ]; then
-					mcopy -i $BOOT_IMG -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtb ::/${DTS_BASE_NAME}.dtb
+					mcopy -i $BOOT_IMG -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtb ::/"boot"/${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtb
 				fi
 			fi
 		done
