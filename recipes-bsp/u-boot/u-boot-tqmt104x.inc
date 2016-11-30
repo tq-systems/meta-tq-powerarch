@@ -29,7 +29,7 @@ do_compile_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-gae23e09"
+LOCALVERSION = "-gaca7eb0"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -69,3 +69,10 @@ SRC_URI += "file://0036-TQMT1042-corrected-error-in-reset-configuration-word.pat
 SRC_URI += "file://0037-TQMT1042-add-reset-configuration-word-for-SerDes-con.patch"
 SRC_URI += "file://0038-TQMT104x-add-generic-TQMT104x-Board-Support-for-TQMT.patch"
 SRC_URI += "file://0039-TQMT1040-add-TQMT1040-defconfigs.patch"
+SRC_URI += "file://0040-TQMT1040-fixed-error-in-defconfig-flags.patch"
+SRC_URI += "file://0041-TQMT1040-Move-defines-for-VSC9953-Switch-from-TQTM10.patch"
+SRC_URI += "file://0042-TQMT104x-Corrected-SDCARDBOOT-default-environment.patch"
+SRC_URI += "file://0043-TQMT104x-relocate-SOC-specific-default-environment-v.patch"
+SRC_URI += "file://0044-TQMT104x-fix-typo-in-SDCARDBOOT-default-environment.patch"
+SRC_URI += "file://0045-TQMT104x-automatic-read-MAC-address-from-EEPROM.patch"
+SRC_URI += "file://0046-TQMT104x-set-EC2-RGMII-phy-to-output-125MHz-on-CLK_O.patch"
