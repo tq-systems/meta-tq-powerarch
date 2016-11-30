@@ -43,7 +43,7 @@ do_configure_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION .= "-gc9067ac"
+LOCALVERSION .= "-ge1d3158"
 SRC_URI += "file://0001-fsl-fman-Add-FMan-MURAM-support.patch"
 SRC_URI += "file://0002-fsl-fman-Add-FMan-support.patch"
 SRC_URI += "file://0003-fsl-fman-Add-FMan-MAC-support.patch"
@@ -175,3 +175,10 @@ SRC_URI += "file://0128-Revert-Revert-phy-dp83867-Make-rgmii-parameters-opti.pat
 SRC_URI += "file://0129-tqmt1042.dts-Fix-NOR-partition-table.patch"
 SRC_URI += "file://0130-tqmt1042.dts-add-descirptive-commentary-and-minor-co.patch"
 SRC_URI += "file://0131-TQMT1042-add-new-device-tree-variant-tqmt1042_serdes.patch"
+SRC_URI += "file://0132-tqmt1040.dts-add-initial-TQMT1040-device-tree.patch"
+SRC_URI += "file://0133-TQMT1040-add-TQMT1040-machine-definition-in-corenet_.patch"
+SRC_URI += "file://0134-tqmt1040.dts-edit-device-tree-to-feature-T1040-l2swi.patch"
+SRC_URI += "file://0135-TQMT104x-add-DIU-support-for-TQMT1040-and-TQMT1042.patch"
+SRC_URI += "file://0136-TQMT104x-add-bootup-logo-in-64bit-defconfig.patch"
+SRC_URI += "file://0137-DP83867-ethernet-phy-driver-add-clock-output-select.patch"
+SRC_URI += "file://0138-TQMT104x-device-trees-set-EC2-RGMII-phy-to-output-12.patch"

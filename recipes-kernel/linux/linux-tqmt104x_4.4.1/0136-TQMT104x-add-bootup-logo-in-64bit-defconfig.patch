@@ -1,0 +1,25 @@
+From d669cf9693741452a096063a611a0c7a31c26d3a Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Fri, 25 Nov 2016 15:45:02 +0100
+Subject: [PATCH] TQMT104x: add bootup logo in 64bit defconfig
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ arch/powerpc/configs/85xx/tqmt1042_64_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/powerpc/configs/85xx/tqmt1042_64_defconfig b/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
+index 25bb436..c1d3064 100644
+--- a/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
++++ b/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
+@@ -156,6 +156,7 @@ CONFIG_FB=y
+ CONFIG_FB_FSL_DIU=y
+ # CONFIG_VGA_CONSOLE is not set
+ CONFIG_FRAMEBUFFER_CONSOLE=y
++CONFIG_LOGO=y
+ CONFIG_SOUND=y
+ CONFIG_SND=y
+ # CONFIG_SND_SUPPORT_OLD_API is not set
+-- 
+1.9.1
+
