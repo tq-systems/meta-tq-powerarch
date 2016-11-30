@@ -9,7 +9,9 @@ EXTRA_OEMAKE_class-target = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${CC} ${CFLAGS} 
 EXTRA_OEMAKE_class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" V=1'
 inherit uboot-config
 do_compile () {
-	oe_runmake ${UBOOT_MACHINE}
+	for defconfig in ${UBOOT_MACHINE}; do
+		oe_runmake $defconfig
+	done
 	oe_runmake env
 }
 
