@@ -43,7 +43,7 @@ do_configure_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION .= "-g07197f5"
+LOCALVERSION .= "-g5b052a9"
 SRC_URI += "file://0001-fsl-fman-Add-FMan-MURAM-support.patch"
 SRC_URI += "file://0002-fsl-fman-Add-FMan-support.patch"
 SRC_URI += "file://0003-fsl-fman-Add-FMan-MAC-support.patch"
@@ -183,3 +183,5 @@ SRC_URI += "file://0136-TQMT104x-add-bootup-logo-in-64bit-defconfig.patch"
 SRC_URI += "file://0137-DP83867-ethernet-phy-driver-add-clock-output-select.patch"
 SRC_URI += "file://0138-TQMT104x-device-trees-set-EC2-RGMII-phy-to-output-12.patch"
 SRC_URI += "file://0139-TQMT104x-add-full-DP83867-properties-in-device-tree.patch"
+SRC_URI += "file://0140-TQMT1042_SERDES8E-dts-set-EC2-RGMII-phy-to-output-12.patch"
+SRC_URI += "file://0141-TQMT1042_SERDES8E-add-full-DP83867-properties-in-dev.patch"
