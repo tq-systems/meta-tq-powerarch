@@ -29,7 +29,7 @@ do_compile_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-g30edef2"
+LOCALVERSION = "-gb27080d"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -78,3 +78,4 @@ SRC_URI += "file://0045-TQMT104x-automatic-read-MAC-address-from-EEPROM.patch"
 SRC_URI += "file://0046-TQMT104x-set-EC2-RGMII-phy-to-output-125MHz-on-CLK_O.patch"
 SRC_URI += "file://0047-TQMT104x-cosmetic-remove-QSGMII-TODO-comment.patch"
 SRC_URI += "file://0048-TQMT104x-automatic-read-MAC-address-from-EEPROM.patch"
+SRC_URI += "file://0049-TQMT104x-automatic-read-MAC-address-from-EEPROM.patch"
