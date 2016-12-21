@@ -36,7 +36,7 @@
 # Supported TQ Powerarch machines are:
 #
 #MACHINE ??= "tqmt1042-stk"
-MACHINE ??= "tqmt1042-64b-stk"
+#MACHINE ??= "tqmt1042-64b-stk"
 
 #
 # Where to place downloads
@@ -238,3 +238,24 @@ ASSUME_PROVIDED += "libsdl-native"
 # track the version of this file when it was generated. This can safely be ignored if
 # this doesn't mean anything to you.
 CONF_VERSION = "1"
+
+# additionally builds full nor flash and sdcard image
+IMAGE_FSTYPES = "nor sdcard"
+
+IMAGE_INSTALL_append = " openssh-sshd parted usbutils pciutils gdb gdbserver u-boot-tqmt104x-fw-utils"
+
+FSL_RCW = "TQMT1042_SERDES86"
+#FSL_RCW = "TQMT1042_SERDES88"
+#FSL_RCW = "TQMT1042_SERDES8E"
+#FSL_RCW = "TQMT1040_SERDES66"
+
+#MACHINE = "tqmt1042-stk"
+MACHINE = "tqmt1042-64b-stk"
+#MACHINE = "tqmt1040-stk"
+#MACHINE = "tqmt1040-64b-stk"
+
+KERNEL_DEVICETREE = "fsl/tqmt1042.dtb"
+#KERNEL_DEVICETREE = "fsl/tqmt1042_serdes8e.dtb"
+#KERNEL_DEVICETREE = "fsl/tqmt1040.dtb"
+
+RM_OLD_IMAGE = "1"
