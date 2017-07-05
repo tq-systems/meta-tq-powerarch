@@ -32,7 +32,7 @@ FILES_libvtss_api-dev = " \
 	${includedir}/* \
 "
 
-RDEPENDS_${PN} = "libvtss_api"
+RDEPENDS_${PN} = "libvtss_api procps"
 
 L2S_BINDIR_e5500 = "${S}/ppce5500"
 L2S_BINDIR_e5500-64b = "${S}/ppc64e5500"
