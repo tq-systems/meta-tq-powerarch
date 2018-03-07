@@ -1,0 +1,39 @@
+From 3bbbf14a316f580bb1e022bc909d36b925b47966 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 7 Mar 2018 16:45:47 +0100
+Subject: [PATCH] TQMT2081: dts: add MAC9 (XFI) device tree node
+
+Replace template with an actual working node setup.
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ arch/powerpc/boot/dts/fsl/tqmt2081.dts | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/boot/dts/fsl/tqmt2081.dts b/arch/powerpc/boot/dts/fsl/tqmt2081.dts
+index 69fe14c..88a6be4 100644
+--- a/arch/powerpc/boot/dts/fsl/tqmt2081.dts
++++ b/arch/powerpc/boot/dts/fsl/tqmt2081.dts
+@@ -295,8 +295,18 @@ reserved-memory {
+ 
+ 			/* MAC9: XFI */
+ 			ethernet@f0000 {
+-				/*phy-handle = none;*/
+ 				phy-connection-type = "xgmii";
++				fixed-link {
++					/* Workaround:
++					 * Set speed to 1000 here as the
++					 * fixed_phy device does accept higher
++					 * speeds. This workaround does not
++					 * affect the bandwidth though, it
++					 * remains at full 10G.
++					 */
++					speed = <1000>;
++					full-duplex;
++				};
+ 			};
+ 
+ 			/* MAC10: ethernet@f2000 unused */
+-- 
+1.9.1
+

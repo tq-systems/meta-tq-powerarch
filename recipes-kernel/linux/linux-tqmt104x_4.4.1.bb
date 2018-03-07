@@ -43,7 +43,7 @@ do_configure_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION .= "-g5b052a9"
+LOCALVERSION .= "-gecd51ee"
 SRC_URI += "file://0001-fsl-fman-Add-FMan-MURAM-support.patch"
 SRC_URI += "file://0002-fsl-fman-Add-FMan-support.patch"
 SRC_URI += "file://0003-fsl-fman-Add-FMan-MAC-support.patch"
@@ -185,3 +185,14 @@ SRC_URI += "file://0138-TQMT104x-device-trees-set-EC2-RGMII-phy-to-output-12.pat
 SRC_URI += "file://0139-TQMT104x-add-full-DP83867-properties-in-device-tree.patch"
 SRC_URI += "file://0140-TQMT1042_SERDES8E-dts-set-EC2-RGMII-phy-to-output-12.patch"
 SRC_URI += "file://0141-TQMT1042_SERDES8E-add-full-DP83867-properties-in-dev.patch"
+SRC_URI += "file://0142-cosmetic-TQMT104x-correct-comments-in-dts-headers.patch"
+SRC_URI += "file://0143-gitignore-add-defconfig-file.patch"
+SRC_URI += "file://0144-TQMT2081-add-32bit-defconfig.patch"
+SRC_URI += "file://0145-TQMT2081-add-64bit-defconfig.patch"
+SRC_URI += "file://0146-TQMT2081-64bit-defconfig-add-remove-TQMT2081-relevan.patch"
+SRC_URI += "file://0147-TQMT2081-add-initial-device-tree-and-SOM-definition-.patch"
+SRC_URI += "file://0148-TQMT2081-dts-remove-accidental-include-of-t2080rdb-d.patch"
+SRC_URI += "file://0149-TQMT2081-dts-add-xfi_tx_dis-gpio-hog-extend-i2c-comm.patch"
+SRC_URI += "file://0150-TQMT2081-dts-add-MAC9-XFI-device-tree-node.patch"
+SRC_URI += "file://0151-cosmetic-TQMT1040-dts-remove-unneccary-whitespaces.patch"
+SRC_URI += "file://0152-cosmetic-TQMT1042-dts-remove-unneccary-whitespaces.patch"
