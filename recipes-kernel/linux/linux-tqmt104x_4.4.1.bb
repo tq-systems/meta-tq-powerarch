@@ -1,5 +1,5 @@
 SECTION = "kernel"
-DESCRIPTION = "inux kernel for TQMT104x modules"
+DESCRIPTION = "Linux kernel for TQMT104x modules"
 LICENSE = "GPLv2"
 
 # make everything compatible for the time being
