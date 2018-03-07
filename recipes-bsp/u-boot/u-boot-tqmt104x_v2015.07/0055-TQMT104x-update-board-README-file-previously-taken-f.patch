@@ -1,0 +1,302 @@
+From 61b456f72a846fac1342b0e436859e07447b214c Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 7 Dec 2017 13:22:23 +0100
+Subject: [PATCH] TQMT104x: update board README file (previously taken from
+ T104XRDB)
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ board/tqc/tqmt104x/README | 227 ++++++++++------------------------------------
+ 1 file changed, 47 insertions(+), 180 deletions(-)
+
+diff --git a/board/tqc/tqmt104x/README b/board/tqc/tqmt104x/README
+index ac95b5e..de7cf4d 100644
+--- a/board/tqc/tqmt104x/README
++++ b/board/tqc/tqmt104x/README
+@@ -1,28 +1,21 @@
+ Overview
+ --------
+-The T1040RDB is a Freescale reference board that hosts the T1040 SoC
+-(and variants). Variants inclued T1042 presonality of T1040, in which
+-case T1040RDB can also be called T1042RDB.
++U-Boot board support for TQMT104x encompasses TQMT1042 and TQMT1042
++TQ embedded modules on TQ baseboard STKT104x.
+ 
+-The T1042RDB is a Freescale reference board that hosts the T1042 SoC
+-(and variants). The board is similar to T1040RDB, T1040 is a reduced
+-personality of T1040 SoC without Integrated 8-port Gigabit(L2 Switch).
++The baseboard STKT104x supports all modules of the type series TQMT104x and
++represents a universal platform for evaluation and development of customer
++specific platforms for those modules.
+ 
+-The T1042RDB_PI is a Freescale reference board that hosts the T1042 SoC.
+-(a personality of T1040 SoC). The board is similar to T1040RDB but is
+-designed specially with low power features targeted for Printing Image Market.
++The baseboard STKT104x supports multiple usage configurations of the T104x's
++SERDES lanes.
+ 
+-Basic difference's among T1040RDB, T1042RDB_PI, T1042RDB
+--------------------------------------------------------------------------
+-Board		Si		Protocol		Targeted Market
+--------------------------------------------------------------------------
+-T1040RDB	T1040		0x66                    Networking
+-T1040RDB	T1042		0x86                    Networking
+-T1042RDB_PI	T1042		0x06                    Printing & Imaging
++For additional information, please see:
++http://support.tq-group.com/doku.php?id=en:power:tqmt104x:linux:overview
+ 
+ 
+-T1040 SoC Overview
+-------------------
++T1040 SoC Overview (taken from board/freescale/t104xrdb/README)
++---------------------------------------------------------------
+ The QorIQ T1040/T1042 processor support four integrated 64-bit e5500 PA
+ processor cores with high-performance data path acceleration architecture
+ and network peripheral interfaces required for networking & telecommunications.
+@@ -68,8 +61,9 @@ The T1040/T1042 SoC includes the following function and features:
+  - Single source clocking implementation
+  - Deep Sleep power implementaion (wakeup from GPIO/Timer/Ethernet/USB)
+ 
+-T1040 SoC Personalities
+--------------------------
++
++T1040 SoC Personalities (taken from board/freescale/t104xrdb/README)
++--------------------------------------------------------------------
+ 
+ T1022 Personality:
+ T1022 is a reduced personality of T1040 with less core/clusters.
+@@ -79,82 +73,50 @@ T1042 is a reduced personality of T1040 without Integrated 8-port Gigabit
+ Ethernet switch. Rest of the blocks are same as T1040
+ 
+ 
+-T1040RDB board Overview
++STKT104x baseboard overview
+ -------------------------
+  - SERDES Connections, 8 lanes information:
+-	1: None
++	1: XFI (not used)
+ 	2: SGMII
+-	3: QSGMII
+-	4: QSGMII
+-	5: PCIe1 x1 slot
+-	6: mini PCIe connector
+-	7: mini PCIe connector
++	3: SGMII/QSGMII
++	4: SGMII
++	5: Aurora / mini PCIe
++	6: connector PCIe1 x1 slot
++	7: mini PCIe connector / SGMII / SATA connector
+ 	8: SATA connector
+  - DDR Controller
+      - Supports rates of up to 1600 MHz data-rate
+      - Supports one DDR3LP UDIMM/RDIMMs, of single-, dual- or quad-rank types.
+  - IFC/Local Bus
+-     - NAND flash: 1GB 8-bit NAND flash
+      - NOR: 128MB 16-bit NOR Flash
+  - Ethernet
+      - Two on-board RGMII 10/100/1G ethernet ports.
+- - CPLD
+  - Clocks
+      - System and DDR clock (SYSCLK, “DDRCLK”)
+      - SERDES clocks
+  - Power Supplies
+  - USB
+-     - Supports two USB 2.0 ports with integrated PHYs
+-     - Two type A ports with 5V@1.5A per port.
++     - TQMT104x Supports two USB 2.0 ports with integrated PHYs
++     - TQMT104x USB1 connected to USB Hub
++	- USB_H1: type A port
++	- USB_H2: type A port
++	- USB_H3: miniPCIe slot
++	- USB_H4: LVDS connector
++     - TQMT104x USB2: type micro-A port
+  - SDHC
+      - SDHC/SDXC connector
++ - DIU
++     - LVDS transceiver and connector
+  - SPI
+-    -  On-board 64MB SPI flash
++    - (to pin header)
+  - Other IO
+     - Two Serial ports
+     - Four I2C ports
+ 
+-T1042RDB_PI board Overview
+--------------------------
+- - SERDES Connections, 8 lanes information:
+-	1, 2, 3, 4 : PCIe x4 slot
+-	5: mini PCIe connector
+-	6: mini PCIe connector
+-	7: NA
+-	8: SATA connector
+- - DDR Controller
+-     - Supports rates of up to 1600 MHz data-rate
+-     - Supports one DDR3LP UDIMM/RDIMMs, of single-, dual- or quad-rank types.
+- - IFC/Local Bus
+-     - NAND flash: 1GB 8-bit NAND flash
+-     - NOR: 128MB 16-bit NOR Flash
+- - Ethernet
+-     - Two on-board RGMII 10/100/1G ethernet ports.
+- - CPLD
+- - Clocks
+-     - System and DDR clock (SYSCLK, “DDRCLK”)
+-     - SERDES clocks
+- - Video
+-     - DIU supports video at up to 1280x1024x32bpp
+- - Power Supplies
+- - USB
+-     - Supports two USB 2.0 ports with integrated PHYs
+-     - Two type A ports with 5V@1.5A per port.
+- - SDHC
+-     - SDHC/SDXC connector
+- - SPI
+-    -  On-board 64MB SPI flash
+- - Other IO
+-    - Two Serial ports
+-    - Four I2C ports
+ 
+ Memory map
+------------
+-The addresses in brackets are physical addresses.
+-
++----------
+ Start Address  End Address      Description                     Size
+-0xF_FFDF_0000  0xF_FFDF_0FFF    IFC - CPLD                      4KB
+-0xF_FF80_0000  0xF_FF80_FFFF    IFC - NAND Flash                64KB
+ 0xF_FE00_0000  0xF_FEFF_FFFF    CCSRBAR                         16MB
+ 0xF_F803_0000  0xF_F803_FFFF    PCI Express 4 I/O Space         64KB
+ 0xF_F802_0000  0xF_F802_FFFF    PCI Express 3 I/O Space	        64KB
+@@ -172,115 +134,20 @@ Start Address  End Address      Description                     Size
+ 
+ 
+ NOR Flash memory Map
+----------------------
+- Start          End             Definition                       Size
+-0xEFF40000      0xEFFFFFFF      u-boot (current bank)            768KB
+-0xEFF20000      0xEFF3FFFF      u-boot env (current bank)        128KB
+-0xEFF00000      0xEFF1FFFF      FMAN Ucode (current bank)        128KB
+-0xED300000      0xEFEFFFFF      rootfs (alt bank)                44MB
+-0xEC800000      0xEC8FFFFF      Hardware device tree (alt bank)  1MB
+-0xEC020000      0xEC7FFFFF      Linux.uImage (alt bank)          7MB + 875KB
+-0xEC000000      0xEC01FFFF      RCW (alt bank)                   128KB
+-0xEBF40000      0xEBFFFFFF      u-boot (alt bank)                768KB
+-0xEBF20000      0xEBF3FFFF      u-boot env (alt bank)            128KB
+-0xEBF00000      0xEBF1FFFF      FMAN ucode (alt bank)            128KB
+-0xE9300000      0xEBEFFFFF      rootfs (current bank)            44MB
+-0xE8800000      0xE88FFFFF      Hardware device tree (cur bank)  11MB + 512KB
+-0xE8020000      0xE86FFFFF      Linux.uImage (current bank)      7MB + 875KB
+-0xE8000000      0xE801FFFF      RCW (current bank)               128KB
+-
+-
+-Various Software configurations/environment variables/commands
+---------------------------------------------------------------
+-The below commands apply to the board
+-
+-1. U-boot environment variable hwconfig
+-   The default hwconfig is:
+-	hwconfig=fsl_ddr:ctlr_intlv=null,bank_intlv=cs0_cs1;usb1:
+-					dr_mode=host,phy_type=utmi
+-   Note: For USB gadget set "dr_mode=peripheral"
+-
+-2. FMAN Ucode versions
+-   fsl_fman_ucode_t1040.bin
+-
+-3. Switching to alternate bank
+-   Commands for switching to alternate bank.
+-
+-	1. To change from vbank0 to vbank4
+-		=> cpld reset altbank (it will boot using vbank4)
+-
+-	2.To change from vbank4 to vbank0
+-		=> cpld reset (it will boot using vbank0)
+-
+-NAND boot with 2 Stage boot loader
+-----------------------------------
+-PBL initialise the internal SRAM and copy SPL(160KB) in SRAM.
+-SPL further initialise DDR using SPD and environment variables and copy
+-u-boot(768 KB) from flash to DDR.
+-Finally SPL transer control to u-boot for futher booting.
+-
+-SPL has following features:
+- - Executes within 256K
+- - No relocation required
+-
+- Run time view of SPL framework during  boot :-
+- -----------------------------------------------
+- Area        | Address                         |
+------------------------------------------------
+- Secure boot | 0xFFFC0000 (32KB)               |
+- headers     |                                 |
+- -----------------------------------------------
+- GD, BD      | 0xFFFC8000 (4KB)                |
+- -----------------------------------------------
+- ENV         | 0xFFFC9000 (8KB)                |
+- -----------------------------------------------
+- HEAP        | 0xFFFCB000 (30KB)               |
+- -----------------------------------------------
+- STACK       | 0xFFFD8000 (22KB)               |
+- -----------------------------------------------
+- U-boot SPL  | 0xFFFD8000 (160KB)              |
+- -----------------------------------------------
+-
+-NAND Flash memory Map on T104xRDB
+-------------------------------------------
+- Start		 End		Definition			Size
+-0x000000	0x0FFFFF	u-boot                          1MB
+-0x180000	0x19FFFF	u-boot env                      128KB
+-0x280000	0x29FFFF	FMAN Ucode                      128KB
+-0x380000	0x39FFFF	QE Firmware                     128KB
+-
+-SD Card memory Map on T104xRDB
+-------------------------------------------
+- Block		#blocks		Definition			Size
++--------------------
++item		start address	content size	partition size
++RCW		0xe8000000	0x50		0x0020000
++Kernel		0xe8020000	0x54b000	0x0800000
++Device Tree	0xe8820000	0x7800		0x0020000
++Rootfs/Ramdisk 	0xe8840000	0x1900000	0x4000000
++Spare		0xec840000	-		0x3600000
++FMAN		0xeff00000	0x7ea0		0x0020000
++U-Boot Env	0xeff20000	-		0x0020000
++
++
++SD Card memory Map on TQMT104x
++------------------------------
++Block		#blocks		Definition			Size
+ 0x008		2048		u-boot                          1MB
+-0x800		0024		u-boot env                      8KB
++0x800		0024		u-boot env (opt.)               8KB
+ 0x820		0256		FMAN Ucode                      128KB
+-0x920		0256		QE Firmware                     128KB
+-
+-SPI Flash memory Map on T104xRDB
+-------------------------------------------
+- Start		 End		Definition			Size
+-0x000000	0x0FFFFF	u-boot                          1MB
+-0x100000	0x101FFF	u-boot env                      8KB
+-0x110000	0x12FFFF	FMAN Ucode                      128KB
+-0x130000	0x14FFFF	QE Firmware                     128KB
+-
+-Please note QE Firmware is only valid for T1040RDB
+-
+-
+-Switch Settings: (ON is 0, OFF is 1)
+-===============
+-NAND boot SW setting:
+-SW1: 10001000
+-SW2: 00111011
+-SW3: 11110001
+-
+-SPI boot SW setting:
+-SW1: 00100010
+-SW2: 10111011
+-SW3: 11100001
+-
+-SD boot SW setting:
+-SW1: 00100000
+-SW2: 00111011
+-SW3: 11100001
+-- 
+1.9.1
+

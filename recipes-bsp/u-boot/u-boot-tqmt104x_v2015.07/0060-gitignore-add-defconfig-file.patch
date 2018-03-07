@@ -1,0 +1,27 @@
+From e20232f22e7082bac667c6da139eb8dd25c0fc38 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 1 Mar 2018 13:52:34 +0100
+Subject: [PATCH] gitignore: add defconfig file
+
+defconfig file create by make savedefconfig is ignored by git
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ .gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/.gitignore b/.gitignore
+index a40c277..d6812fc 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -35,6 +35,7 @@
+ /System.map
+ /u-boot*
+ /boards.cfg
++/defconfig
+ 
+ #
+ # git files that we don't want to ignore even it they are dot-files
+-- 
+1.9.1
+

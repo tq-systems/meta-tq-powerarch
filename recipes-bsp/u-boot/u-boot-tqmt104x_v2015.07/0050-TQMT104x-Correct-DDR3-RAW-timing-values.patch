@@ -1,0 +1,116 @@
+From e173af2570d25169ed0b1251f21d2ae42e54157d Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 6 Jul 2017 10:30:55 +0200
+Subject: [PATCH] TQMT104x: Correct DDR3 RAW timing values
+
+Correct/improve DDR3 RAW timing values and add comments for
+better understanding.
+
+Signed-off-by: Radek Raichel <raichelr@tqs.de>
+Reviewed-by: Stefan Lange <s.lange@gateware.de>
+---
+ board/tqc/tqmt104x/ddr.c | 46 +++++++++++++++++++++++++---------------------
+ board/tqc/tqmt104x/ddr.h |  7 +++----
+ 2 files changed, 28 insertions(+), 25 deletions(-)
+
+diff --git a/board/tqc/tqmt104x/ddr.c b/board/tqc/tqmt104x/ddr.c
+index 3ede56a..869a90d 100644
+--- a/board/tqc/tqmt104x/ddr.c
++++ b/board/tqc/tqmt104x/ddr.c
+@@ -27,7 +27,7 @@ dimm_params_t ddr_raw_timing = {
+         .rank_density = 2147483648u,
+         .capacity = 2147483648u,
+         .primary_sdram_width = 64,
+-        .ec_sdram_width = 16,
++        .ec_sdram_width = 8,
+         .registered_dimm = 0,
+         .mirrored_dimm = 0,
+         .n_row_addr = 15,
+@@ -36,20 +36,25 @@ dimm_params_t ddr_raw_timing = {
+         .edc_config = EDC_ECC,
+         .burst_lengths_bitmask = 0x0c,
+ 
+-        .tckmin_x_ps = 1250,
++        .tckmin_x_ps = 1250,    /* CL = 11 ; CWL = 8 tCK (AVG) (JEDEC:same)*/
+         .caslat_x = 0xfe << 4,  /* 5,6,7,8,9,10,11 */
+-        .taa_ps = 13750,
+-        .twr_ps = 15000,
+-        .trcd_ps = 13750,
+-        .trrd_ps = 6000,
+-        .trp_ps = 13750,
+-        .tras_ps = 35000,
+-        .trc_ps = 48750,
+-        .trfc_ps = 260000,
+-        .twtr_ps = 7500,
+-        .trtp_ps = 7500,
+-        .refresh_rate_ps = 7800000,
+-        .tfaw_ps = 30000,
++        .taa_ps = 13750,        /* Internal READ command to first data tAA (JEDEC:same)*/
++        .twr_ps = 15000,        /* Write recovery time tWR (JEDEC:same) */
++        .trcd_ps = 13750,       /* ACTIVATE to internal READ or WRITE delay time tRCD (JEDEC:same)*/
++        .trrd_ps = 7500,        /* ACTIVATE-to-ACTIVATE minimum command
++				 * period x16 (2KB page size) MIN = greater
++				 * of 4CK (5ns) or 7.5ns (JEDEC:same) */
++        .trp_ps = 13750,        /* PRECHARGE command period tRP (JEDEC:same) */
++        .tras_ps = 35000,       /* ACTIVATE-to-PRECHARGE command period tRAS (JEDEC:same, max<9*tREFI)*/    
++        .trc_ps = 48750,        /* ACTIVATE-to-ACTIVATE command period tRC (JEDEC:same)*/
++        .trfc_ps = 260000,      /* REFRESH-to-ACTIVATE or REFRESH command period tRFC -> 4Gb (JEDEC:same)*/
++        .twtr_ps = 7500,        /* Delay from start of internal WRITE
++				 * transaction to internal READ command tWTR:
++				 * MIN = greater of 4CK (5ns) or 7.5ns (JEDEC:same)*/
++        .trtp_ps = 7500,        /* READ-to-PRECHARGE time tRTP:
++				 * MIN = greater of 4CK (5ns) or 7.5ns (JEDEC:same)*/
++        .refresh_rate_ps = 3900000, /* Max average periodic refresh  tREFI (JEDEC:same)*/
++        .tfaw_ps = 40000,       /* 2kB page size/x16 -> min 40ns (JEDEC:40ns) */
+ };
+ #else
+ #error Missing raw timing data for this board
+@@ -127,20 +132,19 @@ found:
+ 		pbsp->wrlvl_ctl_3);
+ 
+ 	/*
+-	 * Factors to consider for half-strength driver enable:
+-	 *	- number of DIMMs installed
+-	 */
+-	popts->half_strength_driver_enable = 0;
+-	/*
+ 	 * Write leveling override
+ 	 */
+ 	popts->wrlvl_override = 1;
+-	popts->wrlvl_sample = 0xf;
++	popts->wrlvl_sample = 0x12;                  /* min. 12 */
+ 
+ 	/*
+ 	 * rtt and rtt_wr override
+ 	 */
+-	popts->rtt_override = 0;
++	popts->rtt_override = 1;
++	popts->rtt_wr_override_value = 0;            /* Rtt(WR) */
++	popts->rtt_override_value = DDR3_RTT_40_OHM; /* Rtt(nom) */
++	popts->half_strength_driver_enable = 1;      /* half-strength driver enable: 0 -> 18 Ohm; 1 -> 27 Ohm */
++	popts->quad_rank_present = 1;                /* output driver strength: 0 -> 40 Ohm ; 1 -> 34 Ohm */
+ 
+ 	/* Enable ZQ calibration */
+ 	popts->zq_en = 1;
+diff --git a/board/tqc/tqmt104x/ddr.h b/board/tqc/tqmt104x/ddr.h
+index cbd25a2..546e3ce 100644
+--- a/board/tqc/tqmt104x/ddr.h
++++ b/board/tqc/tqmt104x/ddr.h
+@@ -25,11 +25,10 @@ struct board_specific_parameters {
+ static const struct board_specific_parameters udimm0[] = {
+ 	/*
+ 	 * memory controller 0
+-	 *   num|  hi| rank|  clk| wrlvl |   wrlvl
+-	 * ranks| mhz| GB  |adjst| start |   ctl2
++	 *   num|    hi| rank|  clk| wrlvl |     wrlvl | wrlv
++	 * ranks|   mhz| GB  |adjst| start |      ctl2 | ctl3
+ 	 */
+-/* TODO: fix board specific write leveling values (have to be found by experiments) */
+-	{1,  1666, 0, 4,     7, 0x00000000, 0x00000000},
++	{      1,  1666,    0,    4,      7, 0x00000000, 0x00000000},
+ 	{}
+ };
+ 
+-- 
+1.9.1
+

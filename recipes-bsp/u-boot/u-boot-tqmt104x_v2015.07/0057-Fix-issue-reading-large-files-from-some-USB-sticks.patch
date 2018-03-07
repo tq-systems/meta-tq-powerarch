@@ -1,0 +1,41 @@
+From fda5af9051c7289eb51b9f31992f6059c9d94c03 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 28 Dec 2017 11:24:39 +0100
+Subject: [PATCH] Fix issue reading large files from some USB sticks
+
+U-Boot is having trouble reading large files (> 2 MByte) with some USB sticks.
+
+With default USB_MAX_XFER_BLK size of 65535 loading of large files from usb
+fails. Setting USB_MAX_XFER_BLK to 2048 fixed this error for all of the USB
+sticks available in the author's office. However USB read/write speed is
+decreased.
+
+This patch is a workaround.
+The issue has been thoroughly fixed in upstream U-Boot as of 27 Sep 2017
+by commit 6158d0b42411165d34635a2ddfea17e12dce3329
+
+see also:
+https://lists.denx.de/pipermail/u-boot/2016-February/244464.html
+[U-Boot] Issue with USB mass storage (thumb drives)
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ common/usb_storage.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/common/usb_storage.c b/common/usb_storage.c
+index cc9b3e3..2c1b63a 100644
+--- a/common/usb_storage.c
++++ b/common/usb_storage.c
+@@ -103,7 +103,7 @@ struct us_data {
+  * enough free heap space left, but the SCSI READ(10) and WRITE(10) commands are
+  * limited to 65535 blocks.
+  */
+-#define USB_MAX_XFER_BLK	65535
++#define USB_MAX_XFER_BLK       2048
+ #else
+ #define USB_MAX_XFER_BLK	20
+ #endif
+-- 
+1.9.1
+
