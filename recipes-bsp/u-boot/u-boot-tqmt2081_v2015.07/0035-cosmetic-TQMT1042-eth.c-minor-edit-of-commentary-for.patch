@@ -1,0 +1,28 @@
+From 20b08203900de232a4670cec62def9db622041a6 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 12 Oct 2016 13:36:44 +0200
+Subject: [PATCH] [cosmetic] TQMT1042: eth.c: minor edit of commentary for
+ clarification
+
+---
+ board/tqc/tqmt1042/eth.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/board/tqc/tqmt1042/eth.c b/board/tqc/tqmt1042/eth.c
+index e17a4cd..025f516 100644
+--- a/board/tqc/tqmt1042/eth.c
++++ b/board/tqc/tqmt1042/eth.c
+@@ -17,8 +17,8 @@
+ static int eth_phy_qsgmii_reprogram = 0;
+ 
+ /*
+- * Set RGMII delay values in ethernet phys
+- * located on the STKT104x starterkit
++ * Set RGMII delay and other values in ethernet phys
++ * located on the STKTxxxx starterkit
+  */
+ int board_phy_config(struct phy_device *phydev)
+ {
+-- 
+1.9.1
+

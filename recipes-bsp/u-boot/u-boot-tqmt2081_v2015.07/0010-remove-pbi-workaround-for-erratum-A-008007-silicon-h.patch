@@ -1,0 +1,33 @@
+From 7a67e376a220abbb73b00d605ab07debbde7a2b7 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <timo.herbrecher@tq-group.com>
+Date: Tue, 29 Mar 2016 15:08:10 +0200
+Subject: [PATCH] remove pbi workaround for erratum A-008007, silicon has been
+ fixed in Rev 1.1
+
+---
+ board/tqc/tqmt1042/tqmt1042_pbi.cfg | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/board/tqc/tqmt1042/tqmt1042_pbi.cfg b/board/tqc/tqmt1042/tqmt1042_pbi.cfg
+index b1c16ce..893ec27 100644
+--- a/board/tqc/tqmt1042/tqmt1042_pbi.cfg
++++ b/board/tqc/tqmt1042/tqmt1042_pbi.cfg
+@@ -1,15 +1,7 @@
+-#TODO
+ #PBI commands
+ #Software Workaround for errata A-007662 to train PCIe2 controller in Gen2 speed
+ 09250100 00000400
+ 09250108 00002000
+-#Software Workaround for errata A-008007 to reset PVR register
+-09000010 0000000b
+-09000014 c0000000
+-09000018 81d00017
+-89020400 a1000000
+-091380c0 000f0000
+-89020400 00000000
+ #Initialize CPC1
+ 09010000 00200400
+ 09138000 00000000
+-- 
+1.9.1
+

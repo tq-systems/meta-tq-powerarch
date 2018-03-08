@@ -1,0 +1,40 @@
+From 5e1030a67e5a79bcf12428b7e6096e854362655b Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 13 Jul 2016 17:35:03 +0200
+Subject: [PATCH] update TQMT1042_64 defconfig to current state of development
+
+---
+ arch/powerpc/configs/85xx/tqmt1042_64_defconfig | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/arch/powerpc/configs/85xx/tqmt1042_64_defconfig b/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
+index 560c34a..e0e143a 100644
+--- a/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
++++ b/arch/powerpc/configs/85xx/tqmt1042_64_defconfig
+@@ -2683,7 +2683,6 @@ CONFIG_UIO=y
+ # CONFIG_UIO_FSL_ELBC_GPCM is not set
+ # CONFIG_UIO_PRUSS is not set
+ # CONFIG_UIO_MF624 is not set
+-# CONFIG_VFIO is not set
+ CONFIG_VIRT_DRIVERS=y
+ CONFIG_FSL_HV_MANAGER=y
+ 
+@@ -2725,14 +2724,7 @@ CONFIG_CLK_QORIQ=y
+ # CONFIG_SH_TIMER_TMU is not set
+ # CONFIG_EM_TIMER_STI is not set
+ # CONFIG_MAILBOX is not set
+-CONFIG_IOMMU_API=y
+-CONFIG_IOMMU_SUPPORT=y
+-
+-#
+-# Generic IOMMU Pagetable Support
+-#
+-CONFIG_OF_IOMMU=y
+-CONFIG_FSL_PAMU=y
++# CONFIG_IOMMU_SUPPORT is not set
+ 
+ #
+ # Remoteproc drivers
+-- 
+1.9.1
+

@@ -1,0 +1,62 @@
+From 993cf501502d7e84e416c4f16b3812a7ad7a2fa0 Mon Sep 17 00:00:00 2001
+From: Igal Liberman <Igal.Liberman@freescale.com>
+Date: Wed, 5 Feb 2014 15:13:02 +0000
+Subject: [PATCH] powerpc/mpc85xx: Add MDIO bus muxing support to the P1023
+ device tree(s)
+
+Describe the PHY topology for all configurations supported by each board
+
+Based on prior work by Andy Fleming <afleming@freescale.com>
+
+Signed-off-by: Shruti Kanetkar <Shruti@freescale.com>
+Signed-off-by: Emil Medve <Emilian.Medve@Freescale.com>
+Signed-off-by: Igal Liberman <Igal.Liberman@freescale.com>
+---
+ arch/powerpc/boot/dts/fsl/p1023rdb.dts | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/boot/dts/fsl/p1023rdb.dts b/arch/powerpc/boot/dts/fsl/p1023rdb.dts
+index 9716ca6..3f80a0e 100644
+--- a/arch/powerpc/boot/dts/fsl/p1023rdb.dts
++++ b/arch/powerpc/boot/dts/fsl/p1023rdb.dts
+@@ -1,7 +1,7 @@
+ /*
+  * P1023 RDB Device Tree Source
+  *
+- * Copyright 2013 - 2014 Freescale Semiconductor Inc.
++ * Copyright 2013 - 2015 Freescale Semiconductor Inc.
+  *
+  * Author: Chunhe Lan <Chunhe.Lan@freescale.com>
+  *
+@@ -93,6 +93,28 @@
+ 			dr_mode = "host";
+ 			phy_type = "ulpi";
+ 		};
++
++		fman@100000 {
++			ethernet@e0000 {
++				phy-handle = <&phy0>;
++				phy-connection-type = "rgmii";
++			};
++
++			ethernet@e2000 {
++				phy-handle = <&phy1>;
++				phy-connection-type = "rgmii";
++			};
++
++			mdio@e1120 {
++				phy0: ethernet-phy@1 {
++					reg = <0x01>;
++				};
++
++				phy1: ethernet-phy@2 {
++					reg = <0x02>;
++				};
++			};
++		};
+ 	};
+ 
+ 	lbc: localbus@ff605000 {
+-- 
+1.9.1
+

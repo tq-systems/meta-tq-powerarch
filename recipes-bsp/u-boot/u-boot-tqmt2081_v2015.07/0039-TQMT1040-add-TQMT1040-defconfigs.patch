@@ -1,0 +1,37 @@
+From ae23e09c96caabae7c24b5727bf6a9dd8249bffd Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 23 Nov 2016 16:32:13 +0100
+Subject: [PATCH] TQMT1040: add TQMT1040 defconfigs
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ configs/TQMT1040_SDCARD_defconfig | 5 +++++
+ configs/TQMT1040_defconfig        | 4 ++++
+ 2 files changed, 9 insertions(+)
+ create mode 100644 configs/TQMT1040_SDCARD_defconfig
+ create mode 100644 configs/TQMT1040_defconfig
+
+diff --git a/configs/TQMT1040_SDCARD_defconfig b/configs/TQMT1040_SDCARD_defconfig
+new file mode 100644
+index 0000000..4d6e278
+--- /dev/null
++++ b/configs/TQMT1040_SDCARD_defconfig
+@@ -0,0 +1,5 @@
++CONFIG_PPC=y
++CONFIG_MPC85xx=y
++CONFIG_TARGET_TQMT1040=y
++CONFIG_SPL=y
++CONFIG_SYS_EXTRA_OPTIONS="PPC_T1042,TQMT1040,RAMBOOT_PBL,SPL_FSL_PBL,SDCARD"
+diff --git a/configs/TQMT1040_defconfig b/configs/TQMT1040_defconfig
+new file mode 100644
+index 0000000..d94b725
+--- /dev/null
++++ b/configs/TQMT1040_defconfig
+@@ -0,0 +1,4 @@
++CONFIG_PPC=y
++CONFIG_MPC85xx=y
++CONFIG_TARGET_TQMT1040=y
++CONFIG_SYS_EXTRA_OPTIONS="PPC_T1042,TQMT1040"
+-- 
+1.9.1
+

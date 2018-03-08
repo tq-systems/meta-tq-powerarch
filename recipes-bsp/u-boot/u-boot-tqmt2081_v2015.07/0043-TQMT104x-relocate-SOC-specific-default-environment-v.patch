@@ -1,0 +1,78 @@
+From 43450c36bf510318f19f0d48aeed53818161a724 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Fri, 25 Nov 2016 11:31:50 +0100
+Subject: [PATCH] TQMT104x: relocate SOC-specific default environment variables
+
+Move SOC-specific default environment variables "CONFIG_BOOTFILE"
+and "FDTFILE" from general TQMT104x.h header file to specific
+TQMT1040.h respective TQMT1042.h header files.
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ include/configs/TQMT1040.h | 7 +++++++
+ include/configs/TQMT1042.h | 7 +++++++
+ include/configs/TQMT104x.h | 5 +++--
+ 3 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/include/configs/TQMT1040.h b/include/configs/TQMT1040.h
+index 11c5aaa..cff3096 100644
+--- a/include/configs/TQMT1040.h
++++ b/include/configs/TQMT1040.h
+@@ -12,6 +12,13 @@
+ #define CONFIG_VSC9953_CMD
+ #define CONFIG_SYS_FM1_QSGMII11_PHY_ADDR             0x1C
+ 
++/* name and path of kernel image and device tree
++ * set in default environment
++ * for nfs boot and sd card boot
++ */
++#define CONFIG_BOOTFILE "boot/uImage-tqmt1040-64b-stk.bin"
++#define FDTFILE         "boot/uImage-tqmt1040.dtb"
++
+ #include <configs/TQMT104x.h>
+ 
+ #endif	/* __CONFIG_TQMT1040_H */
+diff --git a/include/configs/TQMT1042.h b/include/configs/TQMT1042.h
+index 0e263c2..0fe0a2d 100644
+--- a/include/configs/TQMT1042.h
++++ b/include/configs/TQMT1042.h
+@@ -7,6 +7,13 @@
+ #ifndef __CONFIG_TQMT1042_H
+ #define __CONFIG_TQMT1042_H
+ 
++/* name and path of kernel image and device tree
++ * set in default environment
++ * for nfs boot and sd card boot
++ */
++#define CONFIG_BOOTFILE         "boot/uImage-tqmt1042-64b-stk.bin"
++#define FDTFILE         "boot/uImage-tqmt1042.dtb"
++
+ #include <configs/TQMT104x.h>
+ 
+ #endif	/* __CONFIG_TQMT1042_H */
+diff --git a/include/configs/TQMT104x.h b/include/configs/TQMT104x.h
+index 534f1c8..2c103a9 100644
+--- a/include/configs/TQMT104x.h
++++ b/include/configs/TQMT104x.h
+@@ -636,7 +636,8 @@
+  * Environment Configuration
+  */
+ #define CONFIG_ROOTPATH		"/srv/nfs/rootfs-64b"
+-#define CONFIG_BOOTFILE		"boot/uImage_tqmt1042"					/* uImage on NFS server*/
++/* CONFIG_BOOTFILE moved to TQMT1040.h resp. TQMT1042.h*/
++
+ #define CONFIG_UBOOTPATH	"u-boot/u-boot_tqmt1042.bin"	/* U-Boot image on TFTP server*/
+ 
+ /* default location for tftp and bootm */
+@@ -648,7 +649,7 @@
+ 
+ #define __USB_PHY_TYPE	utmi
+ #define RAMDISKFILE	"uboot/ramdisk.ext2.gz.u-boot"
+-#define FDTFILE		"boot/tqmt1042.dtb"
++/* FDTFILE moved to TQMT1040.h resp. TQMT1042.h*/
+ 
+ #ifdef CONFIG_FSL_DIU_FB
+ #define DIU_ENVIRONMENT "video-mode=fslfb:1024x768-24@60"
+-- 
+1.9.1
+

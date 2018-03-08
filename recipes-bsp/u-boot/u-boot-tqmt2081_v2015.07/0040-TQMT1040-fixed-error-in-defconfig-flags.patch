@@ -1,0 +1,36 @@
+From 3746a0eb1a935e39d0a71ab44a2cde51996d0c51 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Fri, 25 Nov 2016 11:00:04 +0100
+Subject: [PATCH] TQMT1040: fixed error in defconfig flags
+
+PPC_T1042 was errorously set instead of PPC_T1040
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ configs/TQMT1040_SDCARD_defconfig | 2 +-
+ configs/TQMT1040_defconfig        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configs/TQMT1040_SDCARD_defconfig b/configs/TQMT1040_SDCARD_defconfig
+index 4d6e278..82741b4 100644
+--- a/configs/TQMT1040_SDCARD_defconfig
++++ b/configs/TQMT1040_SDCARD_defconfig
+@@ -2,4 +2,4 @@ CONFIG_PPC=y
+ CONFIG_MPC85xx=y
+ CONFIG_TARGET_TQMT1040=y
+ CONFIG_SPL=y
+-CONFIG_SYS_EXTRA_OPTIONS="PPC_T1042,TQMT1040,RAMBOOT_PBL,SPL_FSL_PBL,SDCARD"
++CONFIG_SYS_EXTRA_OPTIONS="PPC_T1040,TQMT1040,RAMBOOT_PBL,SPL_FSL_PBL,SDCARD"
+diff --git a/configs/TQMT1040_defconfig b/configs/TQMT1040_defconfig
+index d94b725..9206f0d 100644
+--- a/configs/TQMT1040_defconfig
++++ b/configs/TQMT1040_defconfig
+@@ -1,4 +1,4 @@
+ CONFIG_PPC=y
+ CONFIG_MPC85xx=y
+ CONFIG_TARGET_TQMT1040=y
+-CONFIG_SYS_EXTRA_OPTIONS="PPC_T1042,TQMT1040"
++CONFIG_SYS_EXTRA_OPTIONS="PPC_T1040,TQMT1040"
+-- 
+1.9.1
+

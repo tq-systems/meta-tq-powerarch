@@ -1,0 +1,40 @@
+From a55087895d1d89ed32d67cc1c97640b1ea23b70a Mon Sep 17 00:00:00 2001
+From: Stefan Lange <timo.herbrecher@tq-group.com>
+Date: Thu, 18 Feb 2016 13:48:36 +0100
+Subject: [PATCH] add DIU intitialisation, remove unused define CONFIG_TQMT1042
+
+---
+ include/configs/TQMT1042.h | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/include/configs/TQMT1042.h b/include/configs/TQMT1042.h
+index 56ca1ab..6322f51 100644
+--- a/include/configs/TQMT1042.h
++++ b/include/configs/TQMT1042.h
+@@ -11,7 +11,6 @@
+ /*
+  * TQMT1042 board configuration file
+  */
+-/*#define CONFIG_TQMT1042*/
+ #define CONFIG_PHYS_64BIT
+ #define CONFIG_SYS_GENERIC_BOARD
+ #define CONFIG_DISPLAY_BOARDINFO
+@@ -299,7 +298,6 @@
+ #define CONFIG_SYS_HUSH_PARSER
+ #define CONFIG_SYS_PROMPT_HUSH_PS2 "> "
+ 
+-#if 0 /* TODO: add support for LVDS display */
+ /* Video */
+ #define CONFIG_FSL_DIU_FB
+ 
+@@ -315,7 +313,6 @@
+ #define CONFIG_VIDEO_LOGO
+ #define CONFIG_VIDEO_BMP_LOGO
+ #endif
+-#endif
+ 
+ /* pass open firmware flat tree */
+ #define CONFIG_OF_LIBFDT
+-- 
+1.9.1
+

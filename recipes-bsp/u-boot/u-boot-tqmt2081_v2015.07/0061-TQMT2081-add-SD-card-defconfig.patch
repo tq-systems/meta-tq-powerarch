@@ -1,0 +1,25 @@
+From 5805c3054b4d037f628ad10a95fde7d74d6c06e6 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 8 Mar 2018 08:29:30 +0100
+Subject: [PATCH] TQMT2081: add SD card defconfig
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ configs/TQMT2081_SDCARD_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 configs/TQMT2081_SDCARD_defconfig
+
+diff --git a/configs/TQMT2081_SDCARD_defconfig b/configs/TQMT2081_SDCARD_defconfig
+new file mode 100644
+index 0000000..60cf079
+--- /dev/null
++++ b/configs/TQMT2081_SDCARD_defconfig
+@@ -0,0 +1,5 @@
++CONFIG_PPC=y
++CONFIG_MPC85xx=y
++CONFIG_TARGET_TQMT2081=y
++CONFIG_SPL=y
++CONFIG_SYS_EXTRA_OPTIONS="PPC_T2081,TQMT2081,RAMBOOT_PBL,SPL_FSL_PBL,SDCARD"
+-- 
+1.9.1
+

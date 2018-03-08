@@ -1,0 +1,44 @@
+From 5b052a9497c48221041e4d4a94d7e6c7d08b9285 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Fri, 2 Dec 2016 08:48:18 +0100
+Subject: [PATCH] TQMT1042_SERDES8E: add full DP83867 properties in device tree
+
+Add a full set of DP83867 ethernet phy properties in the device tree
+also for the DP83867 that are only used in SGMII mode on the
+STKTxxxx.
+Otherwise this debug message pops up upon ifconfig up:
+"TI DP83867 ffe4fc000:03: missing properties in device tree"
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ arch/powerpc/boot/dts/fsl/tqmt1042_serdes8e.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/powerpc/boot/dts/fsl/tqmt1042_serdes8e.dts b/arch/powerpc/boot/dts/fsl/tqmt1042_serdes8e.dts
+index 829fa94..da00c69 100644
+--- a/arch/powerpc/boot/dts/fsl/tqmt1042_serdes8e.dts
++++ b/arch/powerpc/boot/dts/fsl/tqmt1042_serdes8e.dts
+@@ -297,12 +297,20 @@
+ 				};
+ 				phy_sgmii_1: ethernet-phy@03 {
+ 					reg = <0x03>;
++					ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_50_NS>;
++					ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
++					ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
++					ti,dp83867-clk-out-sel = <DP83867_IOMUXCFG_CLK_O_SEL_REF_CLK>;
+ 				};
+ 				phy_sgmii_2: ethernet-phy@1C {
+ 					reg = <0x1C>;
+ 				};
+ 				phy_sgmii_3: ethernet-phy@01 {
+ 					reg = <0x01>;
++					ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_50_NS>;
++					ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
++					ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
++					ti,dp83867-clk-out-sel = <DP83867_IOMUXCFG_CLK_O_SEL_REF_CLK>;
+ 				};
+ 			};
+ 		};
+-- 
+1.9.1
+

@@ -1,0 +1,49 @@
+From 8eb0b66b02d38d42fe9c5353429482bedeb273ae Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Fri, 25 Nov 2016 11:04:58 +0100
+Subject: [PATCH] TQMT1040: Move defines for VSC9953 Switch from TQTM104x.h to
+ TQMT1040.h
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ include/configs/TQMT1040.h | 5 +++++
+ include/configs/TQMT104x.h | 7 -------
+ 2 files changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/include/configs/TQMT1040.h b/include/configs/TQMT1040.h
+index 7164bdb..11c5aaa 100644
+--- a/include/configs/TQMT1040.h
++++ b/include/configs/TQMT1040.h
+@@ -7,6 +7,11 @@
+ #ifndef __CONFIG_TQMT1040_H
+ #define __CONFIG_TQMT1040_H
+ 
++/* Enable VSC9953 L2 Switch driver on T1040 SoC */
++#define CONFIG_VSC9953
++#define CONFIG_VSC9953_CMD
++#define CONFIG_SYS_FM1_QSGMII11_PHY_ADDR             0x1C
++
+ #include <configs/TQMT104x.h>
+ 
+ #endif	/* __CONFIG_TQMT1040_H */
+diff --git a/include/configs/TQMT104x.h b/include/configs/TQMT104x.h
+index 6f4df01..add17d0 100644
+--- a/include/configs/TQMT104x.h
++++ b/include/configs/TQMT104x.h
+@@ -537,13 +537,6 @@
+ #define CONFIG_SYS_RGMII1_PHY_ADDR		0x0E
+ #define CONFIG_SYS_RGMII2_PHY_ADDR		0x05
+ 
+-/* Enable VSC9953 L2 Switch driver on T1040 SoC */
+-#ifdef CONFIG_TQMT1040
+-#define CONFIG_VSC9953
+-#define CONFIG_VSC9953_CMD
+-#define CONFIG_SYS_FM1_QSGMII11_PHY_ADDR             0x1C
+-#endif
+-
+ #define CONFIG_MII		/* MII PHY management */
+ #define CONFIG_ETHPRIME		"FM1@DTSEC4"
+ #define CONFIG_PHY_GIGE		/* Include GbE speed/duplex detection */
+-- 
+1.9.1
+

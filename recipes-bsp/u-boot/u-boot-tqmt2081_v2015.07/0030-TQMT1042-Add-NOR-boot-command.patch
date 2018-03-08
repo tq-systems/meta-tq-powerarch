@@ -1,0 +1,39 @@
+From 14925688592aa6857d6de6becd46aaffd6b20bbe Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Konrad=20Gr=C3=A4fe?= <k.graefe@gateware.de>
+Date: Tue, 11 Oct 2016 18:21:32 +0200
+Subject: [PATCH] TQMT1042: Add NOR boot command
+
+---
+ include/configs/TQMT1042.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/include/configs/TQMT1042.h b/include/configs/TQMT1042.h
+index adb93c6..5442a0a 100644
+--- a/include/configs/TQMT1042.h
++++ b/include/configs/TQMT1042.h
+@@ -717,6 +717,13 @@
+ 	"nfs $fdtaddr $serverip:$rootpath/$fdtfile; "		\
+ 	"bootm $loadaddr - $fdtaddr"
+ 
++#define CONFIG_NORBOOTCOMMAND \
++	"setenv bootargs root=/dev/mtdblock3 rootfstype=jffs2 rootwait rw " \
++	"ip=$ipaddr:$serverip:$gatewayip:$netmask:$hostname:$netdev:off " \
++	"console=$consoledev,$baudrate $othbootargs; " \
++	"bootm 0xe8020000 - 0xe8820000"
++
++
+ #define CONFIG_SDCARDBOOTCOMMAND \
+ 	"setenv bootargs root=/dev/mmcblk0p2 rw rootwait " \
+ 	"ip=$ipaddr:$serverip:$gatewayip:$netmask:$hostname:$netdev:off " \
+@@ -729,7 +736,7 @@
+ #ifdef CONFIG_SDCARD
+ #define CONFIG_BOOTCOMMAND		CONFIG_SDCARDBOOTCOMMAND
+ #else
+-#define CONFIG_BOOTCOMMAND		CONFIG_HDBOOT
++#define CONFIG_BOOTCOMMAND		CONFIG_NORBOOTCOMMAND
+ #endif
+ 
+ #ifdef CONFIG_SECURE_BOOT
+-- 
+1.9.1
+

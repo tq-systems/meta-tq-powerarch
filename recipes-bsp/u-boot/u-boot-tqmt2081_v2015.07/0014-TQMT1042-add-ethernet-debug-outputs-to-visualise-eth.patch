@@ -1,0 +1,33 @@
+From df0d8ea1b9345ff188df4a425ca297e73e159620 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 12 May 2016 09:41:11 +0200
+Subject: [PATCH] TQMT1042: add ethernet debug outputs to visualise ethernet
+ configuration during bootup
+
+---
+ board/tqc/tqmt1042/eth.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/board/tqc/tqmt1042/eth.c b/board/tqc/tqmt1042/eth.c
+index 01caa5a..4efa001 100644
+--- a/board/tqc/tqmt1042/eth.c
++++ b/board/tqc/tqmt1042/eth.c
+@@ -120,6 +120,7 @@ int board_eth_init(bd_t *bis)
+ 
+ 		switch (fm_info_get_enet_if(i)) {
+ 		case PHY_INTERFACE_MODE_SGMII:
++                        printf("Eth:   configuring FM1_DTSEC%i as SGMII\n", i+1);
+                         if (FM1_DTSEC1 == i)
+                                 phy_addr = CONFIG_SYS_SGMII1_PHY_ADDR;
+                         if (FM1_DTSEC2 == i)
+@@ -131,6 +132,7 @@ int board_eth_init(bd_t *bis)
+ 			fm_info_set_phy_address(i, phy_addr);
+ 			break;
+ 		case PHY_INTERFACE_MODE_RGMII:
++			printf("Eth:   configuring FM1_DTSEC%i as RGMII\n", i+1);
+ 			if (FM1_DTSEC4 == i)
+ 				phy_addr = CONFIG_SYS_RGMII1_PHY_ADDR;
+ 			if (FM1_DTSEC5 == i)
+-- 
+1.9.1
+

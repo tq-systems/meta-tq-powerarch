@@ -1,0 +1,30 @@
+From 8f40c0a7dc99b3bbd07534ae80b239d15bedd778 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Konrad=20Gr=C3=A4fe?= <k.graefe@gateware.de>
+Date: Mon, 22 Aug 2016 10:52:51 +0200
+Subject: [PATCH] [cosmetic] TQMT1042RDB: dts: Fix whitespaces
+
+---
+ arch/powerpc/boot/dts/fsl/t1042rdb.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/boot/dts/fsl/t1042rdb.dts b/arch/powerpc/boot/dts/fsl/t1042rdb.dts
+index 1ca8789..a889c30 100644
+--- a/arch/powerpc/boot/dts/fsl/t1042rdb.dts
++++ b/arch/powerpc/boot/dts/fsl/t1042rdb.dts
+@@ -46,11 +46,11 @@
+ 	soc@ffe000000 {
+ 		fman@400000 {
+ 			ethernet@e0000 {
+-			       status = "disabled";
++				   status = "disabled";
+ 			};
+ 
+ 			ethernet@e2000 {
+-			       status = "disabled";
++				   status = "disabled";
+ 			};
+ 
+ 			ethernet@e4000 {
+-- 
+1.9.1
+

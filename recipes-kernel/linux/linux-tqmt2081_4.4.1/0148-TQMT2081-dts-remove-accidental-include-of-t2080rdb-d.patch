@@ -1,0 +1,26 @@
+From a8b1d6b4187321431ab4957fe7053473721ee5ca Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 7 Mar 2018 16:40:42 +0100
+Subject: [PATCH] TQMT2081: dts: remove accidental include of t2080rdb dtsi
+ file
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ arch/powerpc/boot/dts/fsl/tqmt2081.dts | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/powerpc/boot/dts/fsl/tqmt2081.dts b/arch/powerpc/boot/dts/fsl/tqmt2081.dts
+index dea9cba..d217ec3 100644
+--- a/arch/powerpc/boot/dts/fsl/tqmt2081.dts
++++ b/arch/powerpc/boot/dts/fsl/tqmt2081.dts
+@@ -35,7 +35,6 @@
+  */
+ 
+ /include/ "t208xsi-pre.dtsi"
+-/include/ "t208xrdb.dtsi"
+ 
+ /* include ethernet phy header to set rgmii timings in device tree */
+ #include <dt-bindings/net/ti-dp83867.h>
+-- 
+1.9.1
+

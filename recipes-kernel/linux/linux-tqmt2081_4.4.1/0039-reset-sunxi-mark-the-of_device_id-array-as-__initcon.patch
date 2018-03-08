@@ -1,0 +1,29 @@
+From b14ff3da50f3a9600bb28fecfe13c142af534ed8 Mon Sep 17 00:00:00 2001
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Date: Thu, 29 Oct 2015 09:59:34 +0100
+Subject: [PATCH] reset: sunxi: mark the of_device_id array as __initconst
+
+Since this array is static const, it should be marked as __initconst.
+
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/reset/reset-sunxi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/reset/reset-sunxi.c b/drivers/reset/reset-sunxi.c
+index 3d95c87..9353b2d 100644
+--- a/drivers/reset/reset-sunxi.c
++++ b/drivers/reset/reset-sunxi.c
+@@ -122,7 +122,7 @@ err_alloc:
+  * our system, before we can even think of using a regular device
+  * driver for it.
+  */
+-static const struct of_device_id sunxi_early_reset_dt_ids[] __initdata = {
++static const struct of_device_id sunxi_early_reset_dt_ids[] __initconst = {
+ 	{ .compatible = "allwinner,sun6i-a31-ahb1-reset", },
+ 	{ /* sentinel */ },
+ };
+-- 
+1.9.1
+

@@ -1,0 +1,24 @@
+From 1337bec244a1a8bac75a8dcd96253b8152339ca8 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <timo.herbrecher@tq-group.com>
+Date: Tue, 19 Jan 2016 18:30:05 +0100
+Subject: [PATCH] edit RCW to set UART2 pins to UART functionality instead of
+ GPIO
+
+---
+ board/tqc/tqmt1042/tqmt1042_rcw.cfg | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/board/tqc/tqmt1042/tqmt1042_rcw.cfg b/board/tqc/tqmt1042/tqmt1042_rcw.cfg
+index ec1f354..59d1a2e 100644
+--- a/board/tqc/tqmt1042/tqmt1042_rcw.cfg
++++ b/board/tqc/tqmt1042/tqmt1042_rcw.cfg
+@@ -3,5 +3,5 @@ aa55aa55 010e0100
+ # serdes protocol 0x86
+ 0c10000e 0e000000 00000000 00000000
+ 86000002 00000001 ec027000 01000000
+-00000000 00000000 00000000 0001a800
++00000000 00000000 00000000 0002a800
+ 00000000 01565005 00000000 00000000
+-- 
+1.9.1
+

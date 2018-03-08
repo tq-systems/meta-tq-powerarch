@@ -1,0 +1,2180 @@
+From bab7ed3183936aab899a8e877c146cbc4e9884cb Mon Sep 17 00:00:00 2001
+From: Timo Herbrecher <timo.herbrecher@tq-group.com>
+Date: Mon, 28 Dec 2015 19:52:21 +0100
+Subject: [PATCH] Add initial board support for TQMT1042
+
+This commit adds initial board support for the TQMT1042 SOM board from TQ Systems which is based on a Freescale T1042 CPU. Initial board configuration is for the module placed on a STKTxxx starterkit from TQ Systems.
+---
+ arch/powerpc/cpu/mpc85xx/Kconfig           |   5 +
+ arch/powerpc/include/asm/fsl_secure_boot.h |   1 +
+ board/tqc/tqmt1042/Kconfig                 |  12 +
+ board/tqc/tqmt1042/MAINTAINERS             |  24 +
+ board/tqc/tqmt1042/Makefile                |  18 +
+ board/tqc/tqmt1042/README                  | 286 ++++++++++++
+ board/tqc/tqmt1042/ddr.c                   | 183 ++++++++
+ board/tqc/tqmt1042/ddr.h                   |  39 ++
+ board/tqc/tqmt1042/diu.c                   |  65 +++
+ board/tqc/tqmt1042/eth.c                   |  83 ++++
+ board/tqc/tqmt1042/law.c                   |  26 ++
+ board/tqc/tqmt1042/pci.c                   |  23 +
+ board/tqc/tqmt1042/sleep.c                 |  97 ++++
+ board/tqc/tqmt1042/sleep.h                 |  22 +
+ board/tqc/tqmt1042/spl.c                   | 102 +++++
+ board/tqc/tqmt1042/tlb.c                   | 108 +++++
+ board/tqc/tqmt1042/tqmt1042.c              | 112 +++++
+ board/tqc/tqmt1042/tqmt1042.h              |  13 +
+ board/tqc/tqmt1042/tqmt1042_pbi.cfg        |  37 ++
+ board/tqc/tqmt1042/tqmt1042_rcw.cfg        |   7 +
+ configs/TQMT1042_SDCARD_defconfig          |   5 +
+ configs/TQMT1042_defconfig                 |   4 +
+ include/configs/TQMT1042.h                 | 697 +++++++++++++++++++++++++++++
+ 23 files changed, 1969 insertions(+)
+ create mode 100644 board/tqc/tqmt1042/Kconfig
+ create mode 100644 board/tqc/tqmt1042/MAINTAINERS
+ create mode 100644 board/tqc/tqmt1042/Makefile
+ create mode 100644 board/tqc/tqmt1042/README
+ create mode 100644 board/tqc/tqmt1042/ddr.c
+ create mode 100644 board/tqc/tqmt1042/ddr.h
+ create mode 100644 board/tqc/tqmt1042/diu.c
+ create mode 100644 board/tqc/tqmt1042/eth.c
+ create mode 100644 board/tqc/tqmt1042/law.c
+ create mode 100644 board/tqc/tqmt1042/pci.c
+ create mode 100644 board/tqc/tqmt1042/sleep.c
+ create mode 100644 board/tqc/tqmt1042/sleep.h
+ create mode 100644 board/tqc/tqmt1042/spl.c
+ create mode 100644 board/tqc/tqmt1042/tlb.c
+ create mode 100644 board/tqc/tqmt1042/tqmt1042.c
+ create mode 100644 board/tqc/tqmt1042/tqmt1042.h
+ create mode 100644 board/tqc/tqmt1042/tqmt1042_pbi.cfg
+ create mode 100644 board/tqc/tqmt1042/tqmt1042_rcw.cfg
+ create mode 100644 configs/TQMT1042_SDCARD_defconfig
+ create mode 100644 configs/TQMT1042_defconfig
+ create mode 100644 include/configs/TQMT1042.h
+
+diff --git a/arch/powerpc/cpu/mpc85xx/Kconfig b/arch/powerpc/cpu/mpc85xx/Kconfig
+index 3e8d0b1..4f9e764 100644
+--- a/arch/powerpc/cpu/mpc85xx/Kconfig
++++ b/arch/powerpc/cpu/mpc85xx/Kconfig
+@@ -143,6 +143,10 @@ config TARGET_STXGP3
+ config TARGET_STXSSA
+ 	bool "Support stxssa"
+ 
++config TARGET_TQMT1042
++        bool "Support TQMT1042"
++        select SUPPORT_SPL
++
+ config TARGET_XPEDITE520X
+ 	bool "Support xpedite520x"
+ 
+@@ -193,6 +197,7 @@ source "board/sbc8548/Kconfig"
+ source "board/socrates/Kconfig"
+ source "board/stx/stxgp3/Kconfig"
+ source "board/stx/stxssa/Kconfig"
++source "board/tqc/tqmt1042/Kconfig"
+ source "board/xes/xpedite520x/Kconfig"
+ source "board/xes/xpedite537x/Kconfig"
+ source "board/xes/xpedite550x/Kconfig"
+diff --git a/arch/powerpc/include/asm/fsl_secure_boot.h b/arch/powerpc/include/asm/fsl_secure_boot.h
+index 8f794ef..e74698d 100644
+--- a/arch/powerpc/include/asm/fsl_secure_boot.h
++++ b/arch/powerpc/include/asm/fsl_secure_boot.h
+@@ -38,6 +38,7 @@
+ 	defined(CONFIG_T2080RDB) || \
+ 	defined(CONFIG_T1040QDS) || \
+ 	defined(CONFIG_T104xRDB) || \
++	defined(CONFIG_TQMT1042) || \
+ 	defined(CONFIG_PPC_T1023) || \
+ 	defined(CONFIG_PPC_T1024)
+ #define CONFIG_SYS_CPC_REINIT_F
+diff --git a/board/tqc/tqmt1042/Kconfig b/board/tqc/tqmt1042/Kconfig
+new file mode 100644
+index 0000000..f089cea
+--- /dev/null
++++ b/board/tqc/tqmt1042/Kconfig
+@@ -0,0 +1,12 @@
++if TARGET_TQMT1042
++
++config SYS_BOARD
++	default "tqmt1042"
++
++config SYS_VENDOR
++	default "tqc"
++
++config SYS_CONFIG_NAME
++	default "TQMT1042"
++
++endif
+diff --git a/board/tqc/tqmt1042/MAINTAINERS b/board/tqc/tqmt1042/MAINTAINERS
+new file mode 100644
+index 0000000..13d9be9
+--- /dev/null
++++ b/board/tqc/tqmt1042/MAINTAINERS
+@@ -0,0 +1,24 @@
++T104XRDB BOARD
++M:	Priyanka Jain  <Priyanka.Jain@freescale.com>
++S:	Maintained
++F:	board/freescale/t104xrdb/
++F:	include/configs/T104xRDB.h
++F:	configs/T1040RDB_defconfig
++F:	configs/T1040RDB_NAND_defconfig
++F:	configs/T1040RDB_SPIFLASH_defconfig
++F:	configs/T1042RDB_defconfig
++F:	configs/T1042RDB_PI_defconfig
++F:	configs/T1042RDB_PI_NAND_defconfig
++F:	configs/T1042RDB_PI_SPIFLASH_defconfig
++
++T1040RDB_SDCARD BOARD
++#M:	-
++S:	Maintained
++F:	configs/T1040RDB_SDCARD_defconfig
++F:	configs/T1042RDB_PI_SDCARD_defconfig
++
++T1040RDB_SECURE_BOOT BOARD
++M:	Aneesh Bansal  <aneesh.bansal@freescale.com>
++S:	Maintained
++F:	configs/T1040RDB_SECURE_BOOT_defconfig
++F:	configs/T1042RDB_SECURE_BOOT_defconfig
+diff --git a/board/tqc/tqmt1042/Makefile b/board/tqc/tqmt1042/Makefile
+new file mode 100644
+index 0000000..487dbd4
+--- /dev/null
++++ b/board/tqc/tqmt1042/Makefile
+@@ -0,0 +1,18 @@
++#
++# Copyright 2015 TQ Systems GmbH
++#
++# SPDX-License-Identifier:	GPL-2.0+
++#
++
++ifdef CONFIG_SPL_BUILD
++obj-y += spl.o
++else
++obj-y	+= tqmt1042.o
++obj-y	+= eth.o
++obj-$(CONFIG_PCI)	+= pci.o
++obj-$(CONFIG_FSL_DIU_FB)+= diu.o
++endif
++obj-y	+= ddr.o
++obj-y	+= law.o
++obj-y	+= tlb.o
++obj-y	+= sleep.o
+diff --git a/board/tqc/tqmt1042/README b/board/tqc/tqmt1042/README
+new file mode 100644
+index 0000000..ac95b5e
+--- /dev/null
++++ b/board/tqc/tqmt1042/README
+@@ -0,0 +1,286 @@
++Overview
++--------
++The T1040RDB is a Freescale reference board that hosts the T1040 SoC
++(and variants). Variants inclued T1042 presonality of T1040, in which
++case T1040RDB can also be called T1042RDB.
++
++The T1042RDB is a Freescale reference board that hosts the T1042 SoC
++(and variants). The board is similar to T1040RDB, T1040 is a reduced
++personality of T1040 SoC without Integrated 8-port Gigabit(L2 Switch).
++
++The T1042RDB_PI is a Freescale reference board that hosts the T1042 SoC.
++(a personality of T1040 SoC). The board is similar to T1040RDB but is
++designed specially with low power features targeted for Printing Image Market.
++
++Basic difference's among T1040RDB, T1042RDB_PI, T1042RDB
++-------------------------------------------------------------------------
++Board		Si		Protocol		Targeted Market
++-------------------------------------------------------------------------
++T1040RDB	T1040		0x66                    Networking
++T1040RDB	T1042		0x86                    Networking
++T1042RDB_PI	T1042		0x06                    Printing & Imaging
++
++
++T1040 SoC Overview
++------------------
++The QorIQ T1040/T1042 processor support four integrated 64-bit e5500 PA
++processor cores with high-performance data path acceleration architecture
++and network peripheral interfaces required for networking & telecommunications.
++
++The T1040/T1042 SoC includes the following function and features:
++
++ - Four e5500 cores, each with a private 256 KB L2 cache
++ - 256 KB shared L3 CoreNet platform cache (CPC)
++ - Interconnect CoreNet platform
++ - 32-/64-bit DDR3L/DDR4 SDRAM memory controller with ECC and interleaving
++   support
++ - Data Path Acceleration Architecture (DPAA) incorporating acceleration
++ for the following functions:
++    -  Packet parsing, classification, and distribution
++    -  Queue management for scheduling, packet sequencing, and congestion
++       management
++    -  Cryptography Acceleration (SEC 5.0)
++    - RegEx Pattern Matching Acceleration (PME 2.2)
++    - IEEE Std 1588 support
++    - Hardware buffer management for buffer allocation and deallocation
++ - Ethernet interfaces
++    - Integrated 8-port Gigabit Ethernet switch (T1040 only)
++    - Four 1 Gbps Ethernet controllers
++ - Two RGMII interfaces or one RGMII and one MII interfaces
++ - High speed peripheral interfaces
++   - Four PCI Express 2.0 controllers running at up to 5 GHz
++   - Two SATA controllers supporting 1.5 and 3.0 Gb/s operation
++   - Upto two QSGMII interface
++   - Upto six SGMII interface supporting 1000 Mbps
++   - One SGMII interface supporting upto 2500 Mbps
++ - Additional peripheral interfaces
++   - Two USB 2.0 controllers with integrated PHY
++   - SD/eSDHC/eMMC
++   - eSPI controller
++   - Four I2C controllers
++   - Four UARTs
++   - Four GPIO controllers
++   - Integrated flash controller (IFC)
++   - LCD and HDMI interface (DIU) with 12 bit dual data rate
++   - TDM interface
++ - Multicore programmable interrupt controller (PIC)
++ - Two 8-channel DMA engines
++ - Single source clocking implementation
++ - Deep Sleep power implementaion (wakeup from GPIO/Timer/Ethernet/USB)
++
++T1040 SoC Personalities
++-------------------------
++
++T1022 Personality:
++T1022 is a reduced personality of T1040 with less core/clusters.
++
++T1042 Personality:
++T1042 is a reduced personality of T1040 without Integrated 8-port Gigabit
++Ethernet switch. Rest of the blocks are same as T1040
++
++
++T1040RDB board Overview
++-------------------------
++ - SERDES Connections, 8 lanes information:
++	1: None
++	2: SGMII
++	3: QSGMII
++	4: QSGMII
++	5: PCIe1 x1 slot
++	6: mini PCIe connector
++	7: mini PCIe connector
++	8: SATA connector
++ - DDR Controller
++     - Supports rates of up to 1600 MHz data-rate
++     - Supports one DDR3LP UDIMM/RDIMMs, of single-, dual- or quad-rank types.
++ - IFC/Local Bus
++     - NAND flash: 1GB 8-bit NAND flash
++     - NOR: 128MB 16-bit NOR Flash
++ - Ethernet
++     - Two on-board RGMII 10/100/1G ethernet ports.
++ - CPLD
++ - Clocks
++     - System and DDR clock (SYSCLK, “DDRCLK”)
++     - SERDES clocks
++ - Power Supplies
++ - USB
++     - Supports two USB 2.0 ports with integrated PHYs
++     - Two type A ports with 5V@1.5A per port.
++ - SDHC
++     - SDHC/SDXC connector
++ - SPI
++    -  On-board 64MB SPI flash
++ - Other IO
++    - Two Serial ports
++    - Four I2C ports
++
++T1042RDB_PI board Overview
++-------------------------
++ - SERDES Connections, 8 lanes information:
++	1, 2, 3, 4 : PCIe x4 slot
++	5: mini PCIe connector
++	6: mini PCIe connector
++	7: NA
++	8: SATA connector
++ - DDR Controller
++     - Supports rates of up to 1600 MHz data-rate
++     - Supports one DDR3LP UDIMM/RDIMMs, of single-, dual- or quad-rank types.
++ - IFC/Local Bus
++     - NAND flash: 1GB 8-bit NAND flash
++     - NOR: 128MB 16-bit NOR Flash
++ - Ethernet
++     - Two on-board RGMII 10/100/1G ethernet ports.
++ - CPLD
++ - Clocks
++     - System and DDR clock (SYSCLK, “DDRCLK”)
++     - SERDES clocks
++ - Video
++     - DIU supports video at up to 1280x1024x32bpp
++ - Power Supplies
++ - USB
++     - Supports two USB 2.0 ports with integrated PHYs
++     - Two type A ports with 5V@1.5A per port.
++ - SDHC
++     - SDHC/SDXC connector
++ - SPI
++    -  On-board 64MB SPI flash
++ - Other IO
++    - Two Serial ports
++    - Four I2C ports
++
++Memory map
++-----------
++The addresses in brackets are physical addresses.
++
++Start Address  End Address      Description                     Size
++0xF_FFDF_0000  0xF_FFDF_0FFF    IFC - CPLD                      4KB
++0xF_FF80_0000  0xF_FF80_FFFF    IFC - NAND Flash                64KB
++0xF_FE00_0000  0xF_FEFF_FFFF    CCSRBAR                         16MB
++0xF_F803_0000  0xF_F803_FFFF    PCI Express 4 I/O Space         64KB
++0xF_F802_0000  0xF_F802_FFFF    PCI Express 3 I/O Space	        64KB
++0xF_F801_0000  0xF_F801_FFFF    PCI Express 2 I/O Space         64KB
++0xF_F800_0000  0xF_F800_FFFF    PCI Express 1 I/O Space	        64KB
++0xF_F600_0000  0xF_F7FF_FFFF    Queue manager software portal   32MB
++0xF_F400_0000  0xF_F5FF_FFFF    Buffer manager software portal  32MB
++0xF_E800_0000  0xF_EFFF_FFFF    IFC - NOR Flash                 128MB
++0xF_0000_0000  0xF_003F_FFFF    DCSR                            4MB
++0xC_3000_0000  0xC_3FFF_FFFF    PCI Express 4 Mem Space         256MB
++0xC_2000_0000  0xC_2FFF_FFFF    PCI Express 3 Mem Space         256MB
++0xC_1000_0000  0xC_1FFF_FFFF    PCI Express 2 Mem Space         256MB
++0xC_0000_0000  0xC_0FFF_FFFF    PCI Express 1 Mem Space         256MB
++0x0_0000_0000  0x0_ffff_ffff    DDR                             2GB
++
++
++NOR Flash memory Map
++---------------------
++ Start          End             Definition                       Size
++0xEFF40000      0xEFFFFFFF      u-boot (current bank)            768KB
++0xEFF20000      0xEFF3FFFF      u-boot env (current bank)        128KB
++0xEFF00000      0xEFF1FFFF      FMAN Ucode (current bank)        128KB
++0xED300000      0xEFEFFFFF      rootfs (alt bank)                44MB
++0xEC800000      0xEC8FFFFF      Hardware device tree (alt bank)  1MB
++0xEC020000      0xEC7FFFFF      Linux.uImage (alt bank)          7MB + 875KB
++0xEC000000      0xEC01FFFF      RCW (alt bank)                   128KB
++0xEBF40000      0xEBFFFFFF      u-boot (alt bank)                768KB
++0xEBF20000      0xEBF3FFFF      u-boot env (alt bank)            128KB
++0xEBF00000      0xEBF1FFFF      FMAN ucode (alt bank)            128KB
++0xE9300000      0xEBEFFFFF      rootfs (current bank)            44MB
++0xE8800000      0xE88FFFFF      Hardware device tree (cur bank)  11MB + 512KB
++0xE8020000      0xE86FFFFF      Linux.uImage (current bank)      7MB + 875KB
++0xE8000000      0xE801FFFF      RCW (current bank)               128KB
++
++
++Various Software configurations/environment variables/commands
++--------------------------------------------------------------
++The below commands apply to the board
++
++1. U-boot environment variable hwconfig
++   The default hwconfig is:
++	hwconfig=fsl_ddr:ctlr_intlv=null,bank_intlv=cs0_cs1;usb1:
++					dr_mode=host,phy_type=utmi
++   Note: For USB gadget set "dr_mode=peripheral"
++
++2. FMAN Ucode versions
++   fsl_fman_ucode_t1040.bin
++
++3. Switching to alternate bank
++   Commands for switching to alternate bank.
++
++	1. To change from vbank0 to vbank4
++		=> cpld reset altbank (it will boot using vbank4)
++
++	2.To change from vbank4 to vbank0
++		=> cpld reset (it will boot using vbank0)
++
++NAND boot with 2 Stage boot loader
++----------------------------------
++PBL initialise the internal SRAM and copy SPL(160KB) in SRAM.
++SPL further initialise DDR using SPD and environment variables and copy
++u-boot(768 KB) from flash to DDR.
++Finally SPL transer control to u-boot for futher booting.
++
++SPL has following features:
++ - Executes within 256K
++ - No relocation required
++
++ Run time view of SPL framework during  boot :-
++ -----------------------------------------------
++ Area        | Address                         |
++-----------------------------------------------
++ Secure boot | 0xFFFC0000 (32KB)               |
++ headers     |                                 |
++ -----------------------------------------------
++ GD, BD      | 0xFFFC8000 (4KB)                |
++ -----------------------------------------------
++ ENV         | 0xFFFC9000 (8KB)                |
++ -----------------------------------------------
++ HEAP        | 0xFFFCB000 (30KB)               |
++ -----------------------------------------------
++ STACK       | 0xFFFD8000 (22KB)               |
++ -----------------------------------------------
++ U-boot SPL  | 0xFFFD8000 (160KB)              |
++ -----------------------------------------------
++
++NAND Flash memory Map on T104xRDB
++------------------------------------------
++ Start		 End		Definition			Size
++0x000000	0x0FFFFF	u-boot                          1MB
++0x180000	0x19FFFF	u-boot env                      128KB
++0x280000	0x29FFFF	FMAN Ucode                      128KB
++0x380000	0x39FFFF	QE Firmware                     128KB
++
++SD Card memory Map on T104xRDB
++------------------------------------------
++ Block		#blocks		Definition			Size
++0x008		2048		u-boot                          1MB
++0x800		0024		u-boot env                      8KB
++0x820		0256		FMAN Ucode                      128KB
++0x920		0256		QE Firmware                     128KB
++
++SPI Flash memory Map on T104xRDB
++------------------------------------------
++ Start		 End		Definition			Size
++0x000000	0x0FFFFF	u-boot                          1MB
++0x100000	0x101FFF	u-boot env                      8KB
++0x110000	0x12FFFF	FMAN Ucode                      128KB
++0x130000	0x14FFFF	QE Firmware                     128KB
++
++Please note QE Firmware is only valid for T1040RDB
++
++
++Switch Settings: (ON is 0, OFF is 1)
++===============
++NAND boot SW setting:
++SW1: 10001000
++SW2: 00111011
++SW3: 11110001
++
++SPI boot SW setting:
++SW1: 00100010
++SW2: 10111011
++SW3: 11100001
++
++SD boot SW setting:
++SW1: 00100000
++SW2: 00111011
++SW3: 11100001
+diff --git a/board/tqc/tqmt1042/ddr.c b/board/tqc/tqmt1042/ddr.c
+new file mode 100644
+index 0000000..0ce5f14
+--- /dev/null
++++ b/board/tqc/tqmt1042/ddr.c
+@@ -0,0 +1,183 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#include <common.h>
++#include <i2c.h>
++#include <hwconfig.h>
++#include <asm/mmu.h>
++#include <fsl_ddr_sdram.h>
++#include <fsl_ddr_dimm_params.h>
++#include <asm/fsl_law.h>
++#include <asm/mpc85xx_gpio.h>
++#include "ddr.h"
++#include "sleep.h"
++
++DECLARE_GLOBAL_DATA_PTR;
++
++#ifdef CONFIG_SYS_DDR_RAW_TIMING
++#if defined(CONFIG_TQMT1042)
++/*
++ * Micron MT41K256M16HA-125IT
++ */
++dimm_params_t ddr_raw_timing = {
++        .n_ranks = 1,
++        .rank_density = 2147483648u,
++        .capacity = 2147483648u,
++        .primary_sdram_width = 64,
++        .ec_sdram_width = 16,
++        .registered_dimm = 0,
++        .mirrored_dimm = 0,
++        .n_row_addr = 15,
++        .n_col_addr = 10,
++        .n_banks_per_sdram_device = 8,
++        .edc_config = EDC_ECC,
++        .burst_lengths_bitmask = 0x0c,
++
++        .tckmin_x_ps = 1250,
++        .caslat_x = 0xfe << 4,  /* 5,6,7,8,9,10,11 */
++        .taa_ps = 13750,
++        .twr_ps = 15000,
++        .trcd_ps = 13750,
++        .trrd_ps = 6000,
++        .trp_ps = 13750,
++        .tras_ps = 35000,
++        .trc_ps = 48750,
++        .trfc_ps = 260000,
++        .twtr_ps = 7500,
++        .trtp_ps = 7500,
++        .refresh_rate_ps = 7800000,
++        .tfaw_ps = 30000,
++};
++#else
++#error Missing raw timing data for this board
++#endif
++
++int fsl_ddr_get_dimm_params(dimm_params_t *pdimm,
++                unsigned int controller_number,
++                unsigned int dimm_number)
++{
++        const char dimm_model[] = "Fixed DDR on board";
++
++        if ((controller_number == 0) && (dimm_number == 0)) {
++                memcpy(pdimm, &ddr_raw_timing, sizeof(dimm_params_t));
++                memset(pdimm->mpart, 0, sizeof(pdimm->mpart));
++                memcpy(pdimm->mpart, dimm_model, sizeof(dimm_model) - 1);
++        }
++
++        return 0;
++}
++#endif /* CONFIG_SYS_DDR_RAW_TIMING */
++
++void fsl_ddr_board_options(memctl_options_t *popts,
++				dimm_params_t *pdimm,
++				unsigned int ctrl_num)
++{
++	const struct board_specific_parameters *pbsp, *pbsp_highest = NULL;
++	ulong ddr_freq;
++
++	if (ctrl_num > 1) {
++		printf("Not supported controller number %d\n", ctrl_num);
++		return;
++	}
++	if (!pdimm->n_ranks)
++		return;
++
++	pbsp = udimms[0];
++
++	/* Get clk_adjust according to the board ddr
++	 * freqency and n_banks specified in board_specific_parameters table.
++	 */
++	ddr_freq = get_ddr_freq(0) / 1000000;
++	while (pbsp->datarate_mhz_high) {
++		if (pbsp->n_ranks == pdimm->n_ranks &&
++		    (pdimm->rank_density >> 30) >= pbsp->rank_gb) {
++			if (ddr_freq <= pbsp->datarate_mhz_high) {
++				popts->clk_adjust = pbsp->clk_adjust;
++				popts->wrlvl_start = pbsp->wrlvl_start;
++				popts->wrlvl_ctl_2 = pbsp->wrlvl_ctl_2;
++				popts->wrlvl_ctl_3 = pbsp->wrlvl_ctl_3;
++				goto found;
++			}
++			pbsp_highest = pbsp;
++		}
++		pbsp++;
++	}
++
++	if (pbsp_highest) {
++		printf("Error: board specific timing not found\n");
++		printf("for data rate %lu MT/s\n", ddr_freq);
++		printf("Trying to use the highest speed (%u) parameters\n",
++		       pbsp_highest->datarate_mhz_high);
++		popts->clk_adjust = pbsp_highest->clk_adjust;
++		popts->wrlvl_start = pbsp_highest->wrlvl_start;
++		popts->wrlvl_ctl_2 = pbsp->wrlvl_ctl_2;
++		popts->wrlvl_ctl_3 = pbsp->wrlvl_ctl_3;
++	} else {
++		panic("DIMM is not supported by this board");
++	}
++found:
++	debug("Found timing match: n_ranks %d, data rate %d, rank_gb %d\n"
++		"\tclk_adjust %d, wrlvl_start %d, wrlvl_ctrl_2 0x%x, "
++		"wrlvl_ctrl_3 0x%x\n",
++		pbsp->n_ranks, pbsp->datarate_mhz_high, pbsp->rank_gb,
++		pbsp->clk_adjust, pbsp->wrlvl_start, pbsp->wrlvl_ctl_2,
++		pbsp->wrlvl_ctl_3);
++
++	/*
++	 * Factors to consider for half-strength driver enable:
++	 *	- number of DIMMs installed
++	 */
++	popts->half_strength_driver_enable = 0;
++	/*
++	 * Write leveling override
++	 */
++	popts->wrlvl_override = 1;
++	popts->wrlvl_sample = 0xf;
++
++	/*
++	 * rtt and rtt_wr override
++	 */
++	popts->rtt_override = 0;
++
++	/* Enable ZQ calibration */
++	popts->zq_en = 1;
++
++	/* DHC_EN =1, ODT = 75 Ohm */
++	popts->ddr_cdr1 = DDR_CDR1_DHC_EN | DDR_CDR1_ODT(DDR_CDR_ODT_75ohm);
++	popts->ddr_cdr2 = DDR_CDR2_ODT(DDR_CDR_ODT_75ohm);
++}
++
++#if defined(CONFIG_DEEP_SLEEP)
++void board_mem_sleep_setup(void)
++{
++	/* Disable MCKE isolation through system controller */
++	gpio_set_value(29, 0);
++	udelay(1);
++}
++#endif
++
++phys_size_t initdram(int board_type)
++{
++	phys_size_t dram_size;
++
++#if defined(CONFIG_SPL_BUILD) || !defined(CONFIG_RAMBOOT_PBL)
++	puts("Initializing....using SPD\n");
++
++	dram_size = fsl_ddr_sdram();
++
++	dram_size = setup_ddr_tlbs(dram_size / 0x100000);
++	dram_size *= 0x100000;
++
++#else
++	dram_size =  fsl_ddr_sdram_size();
++#endif
++
++#if defined(CONFIG_DEEP_SLEEP) && !defined(CONFIG_SPL_BUILD)
++	fsl_dp_resume();
++#endif
++
++	return dram_size;
++}
+diff --git a/board/tqc/tqmt1042/ddr.h b/board/tqc/tqmt1042/ddr.h
+new file mode 100644
+index 0000000..cbd25a2
+--- /dev/null
++++ b/board/tqc/tqmt1042/ddr.h
+@@ -0,0 +1,39 @@
++/*
++ * Copyright 2015 TQ Systems GmbH.
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#ifndef __DDR_H__
++#define __DDR_H__
++struct board_specific_parameters {
++	u32 n_ranks;
++	u32 datarate_mhz_high;
++	u32 rank_gb;
++	u32 clk_adjust;
++	u32 wrlvl_start;
++	u32 wrlvl_ctl_2;
++	u32 wrlvl_ctl_3;
++};
++
++/*
++ * These tables contain all valid speeds we want to override with board
++ * specific parameters. datarate_mhz_high values need to be in ascending order
++ * for each n_ranks group.
++ */
++
++static const struct board_specific_parameters udimm0[] = {
++	/*
++	 * memory controller 0
++	 *   num|  hi| rank|  clk| wrlvl |   wrlvl
++	 * ranks| mhz| GB  |adjst| start |   ctl2
++	 */
++/* TODO: fix board specific write leveling values (have to be found by experiments) */
++	{1,  1666, 0, 4,     7, 0x00000000, 0x00000000},
++	{}
++};
++
++static const struct board_specific_parameters *udimms[] = {
++	udimm0,
++};
++#endif
+diff --git a/board/tqc/tqmt1042/diu.c b/board/tqc/tqmt1042/diu.c
+new file mode 100644
+index 0000000..d101cbb
+--- /dev/null
++++ b/board/tqc/tqmt1042/diu.c
+@@ -0,0 +1,65 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#include <asm/io.h>
++#include <common.h>
++#include <command.h>
++#include <fsl_diu_fb.h>
++#include <linux/ctype.h>
++#include <video_fb.h>
++
++#include "tqmt1042.h"
++
++/*
++ * DIU Area Descriptor
++ *
++ * Note that we need to byte-swap the value before it's written to the AD
++ * register.
++ */
++#define AD_BYTE_F		0x10000000
++#define AD_ALPHA_C_SHIFT	25
++#define AD_BLUE_C_SHIFT		23
++#define AD_GREEN_C_SHIFT	21
++#define AD_RED_C_SHIFT		19
++#define AD_PIXEL_S_SHIFT	16
++#define AD_COMP_3_SHIFT		12
++#define AD_COMP_2_SHIFT		8
++#define AD_COMP_1_SHIFT		4
++#define AD_COMP_0_SHIFT		0
++
++void diu_set_pixel_clock(unsigned int pixclock)
++{
++	unsigned long speed_ccb, temp;
++	u32 pixval;
++
++	speed_ccb = get_bus_freq(0);
++	temp = 1000000000 / pixclock;
++	temp *= 1000;
++	pixval = speed_ccb / temp;
++
++	/* Program pixel clock */
++	out_be32((unsigned *)CONFIG_SYS_FSL_SCFG_PIXCLK_ADDR,
++		 ((pixval << PXCK_BITS_START) & PXCK_MASK));
++
++	/* enable clock*/
++	out_be32((unsigned *)CONFIG_SYS_FSL_SCFG_PIXCLK_ADDR, PXCKEN_MASK |
++		 ((pixval << PXCK_BITS_START) & PXCK_MASK));
++}
++
++int platform_diu_init(unsigned int xres, unsigned int yres, const char *port)
++{
++	u32 pixel_format;
++
++	pixel_format = cpu_to_le32(AD_BYTE_F | (3 << AD_ALPHA_C_SHIFT) |
++		(0 << AD_BLUE_C_SHIFT) | (1 << AD_GREEN_C_SHIFT) |
++		(2 << AD_RED_C_SHIFT) | (8 << AD_COMP_3_SHIFT) |
++		(8 << AD_COMP_2_SHIFT) | (8 << AD_COMP_1_SHIFT) |
++		(8 << AD_COMP_0_SHIFT) | (3 << AD_PIXEL_S_SHIFT));
++
++	printf("DIU: Switching to monitor LVDS @ %ux%u\n",  xres, yres);
++
++	return fsl_diu_init(xres, yres, pixel_format, 0);
++}
+diff --git a/board/tqc/tqmt1042/eth.c b/board/tqc/tqmt1042/eth.c
+new file mode 100644
+index 0000000..e6ded86
+--- /dev/null
++++ b/board/tqc/tqmt1042/eth.c
+@@ -0,0 +1,83 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#include <common.h>
++#include <netdev.h>
++#include <asm/fsl_serdes.h>
++#include <asm/immap_85xx.h>
++#include <fm_eth.h>
++#include <fsl_mdio.h>
++#include <malloc.h>
++#include <asm/fsl_dtsec.h>
++
++int board_eth_init(bd_t *bis)
++{
++#ifdef CONFIG_FMAN_ENET
++	struct memac_mdio_info memac_mdio_info;
++	unsigned int i;
++	int phy_addr = 0;
++
++	printf("Initializing Fman\n");
++
++	memac_mdio_info.regs =
++		(struct memac_mdio_controller *)CONFIG_SYS_FM1_DTSEC_MDIO_ADDR;
++	memac_mdio_info.name = DEFAULT_FM_MDIO_NAME;
++
++	/* Register the real 1G MDIO bus */
++	fm_memac_mdio_init(bis, &memac_mdio_info);
++
++	/*
++	 * Program on board RGMII, SGMII PHY addresses.
++	 */
++	for (i = FM1_DTSEC1; i < FM1_DTSEC1 + CONFIG_SYS_NUM_FM1_DTSEC; i++) {
++		int idx = i - FM1_DTSEC1;
++
++		switch (fm_info_get_enet_if(i)) {
++		case PHY_INTERFACE_MODE_SGMII:
++                        if (FM1_DTSEC1 == i)
++                                phy_addr = CONFIG_SYS_SGMII1_PHY_ADDR;
++                        if (FM1_DTSEC2 == i)
++                                phy_addr = CONFIG_SYS_SGMII2_PHY_ADDR;
++                        if (FM1_DTSEC3 == i)
++                                phy_addr = CONFIG_SYS_SGMII3_PHY_ADDR;
++                        if (FM1_DTSEC4 == i)
++                                phy_addr = CONFIG_SYS_SGMII4_PHY_ADDR;
++			fm_info_set_phy_address(i, phy_addr);
++			break;
++		case PHY_INTERFACE_MODE_RGMII:
++			if (FM1_DTSEC4 == i)
++				phy_addr = CONFIG_SYS_RGMII1_PHY_ADDR;
++			if (FM1_DTSEC5 == i)
++				phy_addr = CONFIG_SYS_RGMII2_PHY_ADDR;
++			fm_info_set_phy_address(i, phy_addr);
++			break;
++		case PHY_INTERFACE_MODE_QSGMII:
++			/* QSGMII unsupported on T1042 */
++			fm_info_set_phy_address(i, 0);
++			break;
++		case PHY_INTERFACE_MODE_NONE:
++			fm_info_set_phy_address(i, 0);
++			break;
++		default:
++			printf("Fman1: DTSEC%u set to unknown interface %i\n",
++			       idx + 1, fm_info_get_enet_if(i));
++			fm_info_set_phy_address(i, 0);
++			break;
++		}
++		if (fm_info_get_enet_if(i) == PHY_INTERFACE_MODE_QSGMII ||
++		    fm_info_get_enet_if(i) == PHY_INTERFACE_MODE_NONE)
++			fm_info_set_mdio(i, NULL);
++		else
++			fm_info_set_mdio(i,
++					 miiphy_get_dev_by_name(
++							DEFAULT_FM_MDIO_NAME));
++	}
++
++	cpu_eth_init(bis);
++#endif
++
++	return pci_eth_init(bis);
++}
+diff --git a/board/tqc/tqmt1042/law.c b/board/tqc/tqmt1042/law.c
+new file mode 100644
+index 0000000..2fe4ae5
+--- /dev/null
++++ b/board/tqc/tqmt1042/law.c
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#include <common.h>
++#include <asm/fsl_law.h>
++#include <asm/mmu.h>
++
++struct law_entry law_table[] = {
++#ifndef CONFIG_SYS_NO_FLASH
++	SET_LAW(CONFIG_SYS_FLASH_BASE_PHYS, LAW_SIZE_256M, LAW_TRGT_IF_IFC),
++#endif
++#ifdef CONFIG_SYS_BMAN_MEM_PHYS
++	SET_LAW(CONFIG_SYS_BMAN_MEM_PHYS, LAW_SIZE_32M, LAW_TRGT_IF_BMAN),
++#endif
++#ifdef CONFIG_SYS_QMAN_MEM_PHYS
++	SET_LAW(CONFIG_SYS_QMAN_MEM_PHYS, LAW_SIZE_32M, LAW_TRGT_IF_QMAN),
++#endif
++#ifdef CONFIG_SYS_DCSRBAR_PHYS
++	SET_LAW(CONFIG_SYS_DCSRBAR_PHYS, LAW_SIZE_4M, LAW_TRGT_IF_DCSR),
++#endif
++};
++
++int num_law_entries = ARRAY_SIZE(law_table);
+diff --git a/board/tqc/tqmt1042/pci.c b/board/tqc/tqmt1042/pci.c
+new file mode 100644
+index 0000000..f92a01f
+--- /dev/null
++++ b/board/tqc/tqmt1042/pci.c
+@@ -0,0 +1,23 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#include <common.h>
++#include <command.h>
++#include <pci.h>
++#include <asm/fsl_pci.h>
++#include <libfdt.h>
++#include <fdt_support.h>
++#include <asm/fsl_serdes.h>
++
++void pci_init_board(void)
++{
++	fsl_pcie_init_board(0);
++}
++
++void pci_of_setup(void *blob, bd_t *bd)
++{
++	FT_FSL_PCI_SETUP;
++}
+diff --git a/board/tqc/tqmt1042/sleep.c b/board/tqc/tqmt1042/sleep.c
+new file mode 100644
+index 0000000..74b10e4
+--- /dev/null
++++ b/board/tqc/tqmt1042/sleep.c
+@@ -0,0 +1,97 @@
++/*
++ * Copyright 201i5 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:     GPL-2.0+
++ */
++
++#include <common.h>
++#include <asm/immap_85xx.h>
++#include "sleep.h"
++#ifdef CONFIG_U_QE
++#include "../../../drivers/qe/qe.h"
++#endif
++
++DECLARE_GLOBAL_DATA_PTR;
++
++void __weak board_mem_sleep_setup(void)
++{
++}
++
++void __weak board_sleep_prepare(void)
++{
++}
++
++bool is_warm_boot(void)
++{
++        struct ccsr_gur __iomem *gur = (void *)CONFIG_SYS_MPC85xx_GUTS_ADDR;
++
++        if (in_be32(&gur->scrtsr[0]) & DCFG_CCSR_CRSTSR_WDRFR)
++                return 1;
++
++        return 0;
++}
++
++void fsl_dp_disable_console(void)
++{
++        gd->flags |= GD_FLG_SILENT | GD_FLG_DISABLE_CONSOLE;
++}
++
++/*
++ * When wakeup from deep sleep, the first 128 bytes space
++ * will be used to do DDR training which corrupts the data
++ * in there. This function will restore them.
++ */
++static void dp_ddr_restore(void)
++{
++        u64 *src, *dst;
++        int i;
++        struct ccsr_scfg __iomem *scfg = (void *)CONFIG_SYS_MPC85xx_SCFG;
++
++        /* get the address of ddr date from SPARECR3 */
++        src = (u64 *)(in_be32(&scfg->sparecr[2]) + DDR_BUFF_LEN - 8);
++        dst = (u64 *)(CONFIG_SYS_SDRAM_BASE + DDR_BUFF_LEN - 8);
++
++        for (i = 0; i < DDR_BUFF_LEN / 8; i++)
++                *dst-- = *src--;
++
++        flush_dcache();
++}
++
++static void dp_resume_prepare(void)
++{
++        dp_ddr_restore();
++
++        board_sleep_prepare();
++
++        l2cache_init();
++#if defined(CONFIG_RAMBOOT_PBL)
++        disable_cpc_sram();
++#endif
++        enable_cpc();
++
++#ifdef CONFIG_U_QE
++        u_qe_resume();
++#endif
++
++}
++
++int fsl_dp_resume(void)
++{
++        u32 start_addr;
++        void (*kernel_resume)(void);
++        struct ccsr_scfg __iomem *scfg = (void *)CONFIG_SYS_MPC85xx_SCFG;
++
++        if (!is_warm_boot())
++                return 0;
++
++        dp_resume_prepare();
++
++        /* Get the entry address and jump to kernel */
++        start_addr = in_be32(&scfg->sparecr[1]);
++        debug("Entry address is 0x%08x\n", start_addr);
++        kernel_resume = (void (*)(void))start_addr;
++        kernel_resume();
++
++        return 0;
++}
++
+diff --git a/board/tqc/tqmt1042/sleep.h b/board/tqc/tqmt1042/sleep.h
+new file mode 100644
+index 0000000..0799627
+--- /dev/null
++++ b/board/tqc/tqmt1042/sleep.h
+@@ -0,0 +1,22 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier: GPL-2.0+
++ */
++
++#ifndef __SLEEP_H
++#define __SLEEP_H
++
++#define DCFG_CCSR_CRSTSR_WDRFR  (1 << 3)
++#define DDR_BUFF_LEN                    128
++
++/* determine if it is a wakeup from deep sleep */
++bool is_warm_boot(void);
++
++/* disable console output */
++void fsl_dp_disable_console(void);
++
++/* clean up everything and jump to kernel */
++int fsl_dp_resume(void);
++#endif
++
+diff --git a/board/tqc/tqmt1042/spl.c b/board/tqc/tqmt1042/spl.c
+new file mode 100644
+index 0000000..50888d7
+--- /dev/null
++++ b/board/tqc/tqmt1042/spl.c
+@@ -0,0 +1,102 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:    GPL-2.0+
++ */
++
++#include <common.h>
++#include <malloc.h>
++#include <ns16550.h>
++#include <i2c.h>
++#include <mmc.h>
++#include <fsl_esdhc.h>
++#include <spi_flash.h>
++#include "sleep.h"
++
++DECLARE_GLOBAL_DATA_PTR;
++
++phys_size_t get_effective_memsize(void)
++{
++	return CONFIG_SYS_L3_SIZE;
++}
++
++unsigned long get_board_sys_clk(void)
++{
++	return CONFIG_SYS_CLK_FREQ;
++}
++
++unsigned long get_board_ddr_clk(void)
++{
++	return CONFIG_DDR_CLK_FREQ;
++}
++
++#define FSL_CORENET_CCSR_PORSR1_RCW_MASK	0xFF800000
++void board_init_f(ulong bootflag)
++{
++	u32 plat_ratio, sys_clk, uart_clk;
++	ccsr_gur_t *gur = (void *)CONFIG_SYS_MPC85xx_GUTS_ADDR;
++
++	/* Memcpy existing GD at CONFIG_SPL_GD_ADDR */
++	memcpy((void *)CONFIG_SPL_GD_ADDR, (void *)gd, sizeof(gd_t));
++
++	/* Update GD pointer */
++	gd = (gd_t *)(CONFIG_SPL_GD_ADDR);
++
++#ifdef CONFIG_DEEP_SLEEP
++	/* disable the console if boot from deep sleep */
++	if (is_warm_boot())
++		fsl_dp_disable_console();
++#endif
++	/* compiler optimization barrier needed for GCC >= 3.4 */
++	__asm__ __volatile__("" : : : "memory");
++
++	console_init_f();
++
++	/* initialize selected port with appropriate baud rate */
++	sys_clk = get_board_sys_clk();
++	plat_ratio = (in_be32(&gur->rcwsr[0]) >> 25) & 0x1f;
++	uart_clk = sys_clk * plat_ratio / 2;
++
++	NS16550_init((NS16550_t)CONFIG_SYS_NS16550_COM1,
++		     uart_clk / 16 / CONFIG_BAUDRATE);
++
++	relocate_code(CONFIG_SPL_RELOC_STACK, (gd_t *)CONFIG_SPL_GD_ADDR, 0x0);
++}
++
++void board_init_r(gd_t *gd, ulong dest_addr)
++{
++	bd_t *bd;
++
++	bd = (bd_t *)(gd + sizeof(gd_t));
++	memset(bd, 0, sizeof(bd_t));
++	gd->bd = bd;
++	bd->bi_memstart = CONFIG_SYS_INIT_L3_ADDR;
++	bd->bi_memsize = CONFIG_SYS_L3_SIZE;
++
++	probecpu();
++	get_clocks();
++	mem_malloc_init(CONFIG_SPL_RELOC_MALLOC_ADDR,
++			CONFIG_SPL_RELOC_MALLOC_SIZE);
++
++#ifdef CONFIG_SPL_MMC_BOOT
++	mmc_initialize(bd);
++#endif
++
++	/* relocate environment function pointers etc. */
++#ifdef CONFIG_SPL_MMC_BOOT
++	mmc_spl_load_image(CONFIG_ENV_OFFSET, CONFIG_ENV_SIZE,
++			   (uchar *)CONFIG_ENV_ADDR);
++#endif
++	gd->env_addr  = (ulong)(CONFIG_ENV_ADDR);
++	gd->env_valid = 1;
++
++	i2c_init_all();
++
++	puts("\n\n");
++
++	gd->ram_size = initdram(0);
++
++#ifdef CONFIG_SPL_MMC_BOOT
++	mmc_boot();
++#endif
++}
+diff --git a/board/tqc/tqmt1042/tlb.c b/board/tqc/tqmt1042/tlb.c
+new file mode 100644
+index 0000000..e842a9d
+--- /dev/null
++++ b/board/tqc/tqmt1042/tlb.c
+@@ -0,0 +1,108 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#include <common.h>
++#include <asm/mmu.h>
++
++struct fsl_e_tlb_entry tlb_table[] = {
++	/* TLB 0 - for temp stack in cache */
++	SET_TLB_ENTRY(0, CONFIG_SYS_INIT_RAM_ADDR,
++		      CONFIG_SYS_INIT_RAM_ADDR_PHYS,
++		      MAS3_SX|MAS3_SW|MAS3_SR, 0,
++		      0, 0, BOOKE_PAGESZ_4K, 0),
++	SET_TLB_ENTRY(0, CONFIG_SYS_INIT_RAM_ADDR + 4 * 1024,
++		      CONFIG_SYS_INIT_RAM_ADDR_PHYS + 4 * 1024,
++		      MAS3_SX|MAS3_SW|MAS3_SR, 0,
++		      0, 0, BOOKE_PAGESZ_4K, 0),
++	SET_TLB_ENTRY(0, CONFIG_SYS_INIT_RAM_ADDR + 8 * 1024,
++		      CONFIG_SYS_INIT_RAM_ADDR_PHYS + 8 * 1024,
++		      MAS3_SX|MAS3_SW|MAS3_SR, 0,
++		      0, 0, BOOKE_PAGESZ_4K, 0),
++	SET_TLB_ENTRY(0, CONFIG_SYS_INIT_RAM_ADDR + 12 * 1024,
++		      CONFIG_SYS_INIT_RAM_ADDR_PHYS + 12 * 1024,
++		      MAS3_SX|MAS3_SW|MAS3_SR, 0,
++		      0, 0, BOOKE_PAGESZ_4K, 0),
++
++	/* TLB 1 */
++	/* *I*** - Covers boot page */
++#if defined(CONFIG_SYS_RAMBOOT) && defined(CONFIG_SYS_INIT_L3_ADDR)
++	/*
++	 * *I*G - L3SRAM. When L3 is used as 256K SRAM, the address of the
++	 * SRAM is at 0xfffc0000, it covered the 0xfffff000.
++	 */
++	SET_TLB_ENTRY(1, CONFIG_SYS_INIT_L3_ADDR, CONFIG_SYS_INIT_L3_ADDR,
++		      MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		      0, 0, BOOKE_PAGESZ_256K, 1),
++#else
++	SET_TLB_ENTRY(1, 0xfffff000, 0xfffff000,
++		      MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		      0, 0, BOOKE_PAGESZ_4K, 1),
++#endif
++
++	/* *I*G* - CCSRBAR */
++	SET_TLB_ENTRY(1, CONFIG_SYS_CCSRBAR, CONFIG_SYS_CCSRBAR_PHYS,
++		      MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		      0, 1, BOOKE_PAGESZ_16M, 1),
++
++	/* *I*G* - Flash, localbus */
++	/* This will be changed to *I*G* after relocation to RAM. */
++#ifndef CONFIG_SYS_NO_FLASH
++	SET_TLB_ENTRY(1, CONFIG_SYS_FLASH_BASE, CONFIG_SYS_FLASH_BASE_PHYS,
++		      MAS3_SX|MAS3_SR, MAS2_W|MAS2_G,
++		      0, 2, BOOKE_PAGESZ_256M, 1),
++#endif
++
++#ifndef CONFIG_SPL_BUILD
++#ifdef CONFIG_PCI
++	/* *I*G* - PCI */
++	SET_TLB_ENTRY(1, CONFIG_SYS_PCIE1_MEM_VIRT, CONFIG_SYS_PCIE1_MEM_PHYS,
++		      MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		      0, 3, BOOKE_PAGESZ_1G, 1),
++
++	/* *I*G* - PCI I/O */
++	SET_TLB_ENTRY(1, CONFIG_SYS_PCIE1_IO_VIRT, CONFIG_SYS_PCIE1_IO_PHYS,
++		      MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		      0, 4, BOOKE_PAGESZ_256K, 1),
++#endif
++
++	/* Bman/Qman */
++#ifdef CONFIG_SYS_BMAN_MEM_PHYS
++	SET_TLB_ENTRY(1, CONFIG_SYS_BMAN_MEM_BASE, CONFIG_SYS_BMAN_MEM_PHYS,
++		      MAS3_SX|MAS3_SW|MAS3_SR, 0,
++		      0, 5, BOOKE_PAGESZ_16M, 1),
++	SET_TLB_ENTRY(1, CONFIG_SYS_BMAN_MEM_BASE + 0x01000000,
++		      CONFIG_SYS_BMAN_MEM_PHYS + 0x01000000,
++		      MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		      0, 6, BOOKE_PAGESZ_16M, 1),
++#endif
++#ifdef CONFIG_SYS_QMAN_MEM_PHYS
++	SET_TLB_ENTRY(1, CONFIG_SYS_QMAN_MEM_BASE, CONFIG_SYS_QMAN_MEM_PHYS,
++		      MAS3_SX|MAS3_SW|MAS3_SR, 0,
++		      0, 7, BOOKE_PAGESZ_16M, 1),
++	SET_TLB_ENTRY(1, CONFIG_SYS_QMAN_MEM_BASE + 0x01000000,
++		      CONFIG_SYS_QMAN_MEM_PHYS + 0x01000000,
++		      MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		      0, 8, BOOKE_PAGESZ_16M, 1),
++#endif
++#endif
++#ifdef CONFIG_SYS_DCSRBAR_PHYS
++	SET_TLB_ENTRY(1, CONFIG_SYS_DCSRBAR, CONFIG_SYS_DCSRBAR_PHYS,
++		      MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		      0, 9, BOOKE_PAGESZ_4M, 1),
++#endif
++
++#if defined(CONFIG_RAMBOOT_PBL) && !defined(CONFIG_SPL_BUILD)
++	SET_TLB_ENTRY(1, CONFIG_SYS_DDR_SDRAM_BASE, CONFIG_SYS_DDR_SDRAM_BASE,
++		      MAS3_SX|MAS3_SW|MAS3_SR, 0,
++		      0, 12, BOOKE_PAGESZ_1G, 1),
++	SET_TLB_ENTRY(1, CONFIG_SYS_DDR_SDRAM_BASE + 0x40000000,
++		      CONFIG_SYS_DDR_SDRAM_BASE + 0x40000000,
++		      MAS3_SX|MAS3_SW|MAS3_SR, 0,
++		      0, 13, BOOKE_PAGESZ_1G, 1)
++#endif
++};
++
++int num_tlb_entries = ARRAY_SIZE(tlb_table);
+diff --git a/board/tqc/tqmt1042/tqmt1042.c b/board/tqc/tqmt1042/tqmt1042.c
+new file mode 100644
+index 0000000..219aa05
+--- /dev/null
++++ b/board/tqc/tqmt1042/tqmt1042.c
+@@ -0,0 +1,112 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#include <common.h>
++#include <command.h>
++#include <netdev.h>
++#include <linux/compiler.h>
++#include <asm/mmu.h>
++#include <asm/processor.h>
++#include <asm/cache.h>
++#include <asm/immap_85xx.h>
++#include <asm/fsl_law.h>
++#include <asm/fsl_serdes.h>
++#include <asm/fsl_portals.h>
++#include <asm/fsl_liodn.h>
++#include <fm_eth.h>
++#include "sleep.h"
++#include "tqmt1042.h"
++
++DECLARE_GLOBAL_DATA_PTR;
++
++int checkboard(void)
++{
++	struct cpu_type *cpu = gd->arch.cpu;
++
++	printf("Board: TQM%s\n", cpu->name);
++
++	return 0;
++}
++
++int board_early_init_f(void)
++{
++#if defined(CONFIG_DEEP_SLEEP)
++	if (is_warm_boot())
++		fsl_dp_disable_console();
++#endif
++
++	return 0;
++}
++
++int board_early_init_r(void)
++{
++#ifdef CONFIG_SYS_FLASH_BASE
++	const unsigned int flashbase = CONFIG_SYS_FLASH_BASE;
++	int flash_esel = find_tlb_idx((void *)flashbase, 1);
++
++	/*
++	 * Remap Boot flash region to caching-inhibited
++	 * so that flash can be erased properly.
++	 */
++
++	/* Flush d-cache and invalidate i-cache of any FLASH data */
++	flush_dcache();
++	invalidate_icache();
++
++	if (flash_esel == -1) {
++		/* very unlikely unless something is messed up */
++		puts("Error: Could not find TLB for FLASH BASE\n");
++		flash_esel = 2;	/* give our best effort to continue */
++	} else {
++		/* invalidate existing TLB entry for flash */
++		disable_tlb(flash_esel);
++	}
++
++	set_tlb(1, flashbase, CONFIG_SYS_FLASH_BASE_PHYS,
++		MAS3_SX|MAS3_SW|MAS3_SR, MAS2_I|MAS2_G,
++		0, flash_esel, BOOKE_PAGESZ_256M, 1);
++#endif
++	set_liodns();
++#ifdef CONFIG_SYS_DPAA_QBMAN
++	setup_portals();
++#endif
++
++	return 0;
++}
++
++int misc_init_r(void)
++{
++	return 0;
++}
++
++int ft_board_setup(void *blob, bd_t *bd)
++{
++	phys_addr_t base;
++	phys_size_t size;
++
++	ft_cpu_setup(blob, bd);
++
++	base = getenv_bootm_low();
++	size = getenv_bootm_size();
++
++	fdt_fixup_memory(blob, (u64)base, (u64)size);
++
++#ifdef CONFIG_PCI
++	pci_of_setup(blob, bd);
++#endif
++
++	fdt_fixup_liodn(blob);
++
++#ifdef CONFIG_HAS_FSL_DR_USB
++	fdt_fixup_dr_usb(blob, bd);
++#endif
++
++#ifdef CONFIG_SYS_DPAA_FMAN
++	fdt_fixup_fman_ethernet(blob);
++#endif
++
++	return 0;
++}
+diff --git a/board/tqc/tqmt1042/tqmt1042.h b/board/tqc/tqmt1042/tqmt1042.h
+new file mode 100644
+index 0000000..36f7df4
+--- /dev/null
++++ b/board/tqc/tqmt1042/tqmt1042.h
+@@ -0,0 +1,13 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
++
++#ifndef __TQMT1042_H__
++#define __TQMT1042_H__
++
++void fdt_fixup_board_enet(void *blob);
++void pci_of_setup(void *blob, bd_t *bd);
++
++#endif
+diff --git a/board/tqc/tqmt1042/tqmt1042_pbi.cfg b/board/tqc/tqmt1042/tqmt1042_pbi.cfg
+new file mode 100644
+index 0000000..b1c16ce
+--- /dev/null
++++ b/board/tqc/tqmt1042/tqmt1042_pbi.cfg
+@@ -0,0 +1,37 @@
++#TODO
++#PBI commands
++#Software Workaround for errata A-007662 to train PCIe2 controller in Gen2 speed
++09250100 00000400
++09250108 00002000
++#Software Workaround for errata A-008007 to reset PVR register
++09000010 0000000b
++09000014 c0000000
++09000018 81d00017
++89020400 a1000000
++091380c0 000f0000
++89020400 00000000
++#Initialize CPC1
++09010000 00200400
++09138000 00000000
++091380c0 00000100
++#Configure CPC1 as 256KB SRAM
++09010100 00000000
++09010104 fffc0007
++09010f00 08000000
++09010000 80000000
++#Configure LAW for CPC1
++09000cd0 00000000
++09000cd4 fffc0000
++09000cd8 81000011
++#Configure alternate space
++09000010 00000000
++09000014 ff000000
++09000018 81000000
++#Configure SPI controller
++09110000 80000403
++09110020 2d170008
++09110024 00100008
++09110028 00100008
++0911002c 00100008
++#Flush PBL data
++091380c0 000FFFFF
+diff --git a/board/tqc/tqmt1042/tqmt1042_rcw.cfg b/board/tqc/tqmt1042/tqmt1042_rcw.cfg
+new file mode 100644
+index 0000000..3fccc09
+--- /dev/null
++++ b/board/tqc/tqmt1042/tqmt1042_rcw.cfg
+@@ -0,0 +1,7 @@
++#PBL preamble and RCW header
++aa55aa55 010e0100
++# serdes protocol 0x86
++0c10000e 0e000000 00000000 00000000
++86000002 80000001 ec027000 01000000
++00000000 00000000 00000000 0001a800
++00000000 01565005 00000000 00000000
+diff --git a/configs/TQMT1042_SDCARD_defconfig b/configs/TQMT1042_SDCARD_defconfig
+new file mode 100644
+index 0000000..1c5591c
+--- /dev/null
++++ b/configs/TQMT1042_SDCARD_defconfig
+@@ -0,0 +1,5 @@
++CONFIG_PPC=y
++CONFIG_MPC85xx=y
++CONFIG_TARGET_TQMT1042=y
++CONFIG_SPL=y
++CONFIG_SYS_EXTRA_OPTIONS="PPC_T1042,TQMT1042,RAMBOOT_PBL,SPL_FSL_PBL,SDCARD"
+diff --git a/configs/TQMT1042_defconfig b/configs/TQMT1042_defconfig
+new file mode 100644
+index 0000000..afc7ae9
+--- /dev/null
++++ b/configs/TQMT1042_defconfig
+@@ -0,0 +1,4 @@
++CONFIG_PPC=y
++CONFIG_MPC85xx=y
++CONFIG_TARGET_TQMT1042=y
++CONFIG_SYS_EXTRA_OPTIONS="PPC_T1042,TQMT1042"
+diff --git a/include/configs/TQMT1042.h b/include/configs/TQMT1042.h
+new file mode 100644
+index 0000000..885c456
+--- /dev/null
++++ b/include/configs/TQMT1042.h
+@@ -0,0 +1,697 @@
++/*
++ * Copyright 2015 TQ Systems GmbH
++ *
++ * SPDX-License-Identifier:     GPL-2.0+
++ */
++
++#ifndef __CONFIG_H
++#define __CONFIG_H
++
++#undef DEBUG
++/*
++ * TQMT1042 board configuration file
++ */
++/*#define CONFIG_TQMT1042*/
++#define CONFIG_PHYS_64BIT
++#define CONFIG_SYS_GENERIC_BOARD
++#define CONFIG_DISPLAY_BOARDINFO
++
++#define CONFIG_E500			/* BOOKE e500 family */
++#include <asm/config_mpc85xx.h>
++
++#define CONFIG_PCI	/* Enable PCI/PCIE */
++
++#ifdef CONFIG_RAMBOOT_PBL
++#define CONFIG_SYS_FSL_PBL_PBI $(SRCTREE)/board/tqc/tqmt1042/tqmt1042_pbi.cfg
++#define CONFIG_SYS_FSL_PBL_RCW $(SRCTREE)/board/tqc/tqmt1042/tqmt1042_rcw.cfg
++
++#define CONFIG_SPL_MPC8XXX_INIT_DDR_SUPPORT
++#define CONFIG_SPL_ENV_SUPPORT
++#define CONFIG_SPL_SERIAL_SUPPORT
++#define CONFIG_SPL_FLUSH_IMAGE
++#define CONFIG_SPL_TARGET		"u-boot-with-spl.bin"
++#define CONFIG_SPL_LIBGENERIC_SUPPORT
++#define CONFIG_SPL_LIBCOMMON_SUPPORT
++#define CONFIG_SPL_I2C_SUPPORT
++#define CONFIG_SPL_DRIVERS_MISC_SUPPORT
++#define CONFIG_FSL_LAW                 /* Use common FSL init code */
++#define CONFIG_SYS_TEXT_BASE		0x30001000
++#define CONFIG_SPL_TEXT_BASE		0xFFFD8000
++#define CONFIG_SPL_PAD_TO		0x40000
++#define CONFIG_SPL_MAX_SIZE		0x28000
++#ifdef CONFIG_SPL_BUILD
++#define CONFIG_SPL_SKIP_RELOCATE
++#define CONFIG_SPL_COMMON_INIT_DDR
++#define CONFIG_SYS_CCSR_DO_NOT_RELOCATE
++#define CONFIG_SYS_NO_FLASH
++#endif
++#define RESET_VECTOR_OFFSET		0x27FFC
++#define BOOT_PAGE_OFFSET		0x27000
++
++#ifdef CONFIG_SDCARD
++#define	CONFIG_RESET_VECTOR_ADDRESS		0x30000FFC
++#define CONFIG_SPL_MMC_SUPPORT
++#define CONFIG_SPL_MMC_MINIMAL
++#define CONFIG_SYS_MMC_U_BOOT_SIZE	(768 << 10)
++#define CONFIG_SYS_MMC_U_BOOT_DST	(0x30000000)
++#define CONFIG_SYS_MMC_U_BOOT_START	(0x30000000)
++#define CONFIG_SYS_MMC_U_BOOT_OFFS	(260 << 10)
++#define CONFIG_SYS_LDSCRIPT	"arch/powerpc/cpu/mpc85xx/u-boot.lds"
++#ifndef CONFIG_SPL_BUILD
++#define	CONFIG_SYS_MPC85XX_NO_RESETVEC
++#endif
++#define CONFIG_SPL_MMC_BOOT
++#endif
++#endif
++
++/* High Level Configuration Options */
++#define CONFIG_BOOKE
++#define CONFIG_E500MC			/* BOOKE e500mc family */
++#define CONFIG_SYS_BOOK3E_HV		/* Category E.HV supported */
++#define CONFIG_MP			/* support multiple processors */
++
++/* support deep sleep */
++#undef CONFIG_DEEP_SLEEP /* TODO: disabled for bringup */
++#if defined(CONFIG_DEEP_SLEEP)
++#define CONFIG_BOARD_EARLY_INIT_F
++#define CONFIG_SILENT_CONSOLE
++#endif
++
++#ifndef CONFIG_SYS_TEXT_BASE
++#define CONFIG_SYS_TEXT_BASE	0xeff40000
++#endif
++
++#ifndef CONFIG_RESET_VECTOR_ADDRESS
++#define CONFIG_RESET_VECTOR_ADDRESS	0xeffffffc
++#endif
++
++#define CONFIG_SYS_FSL_CPC		/* Corenet Platform Cache */
++#define CONFIG_SYS_NUM_CPC		CONFIG_NUM_DDR_CONTROLLERS
++#define CONFIG_FSL_IFC			/* Enable IFC Support */
++#define CONFIG_FSL_CAAM			/* Enable SEC/CAAM */
++
++
++#define CONFIG_PCI_INDIRECT_BRIDGE
++#define CONFIG_PCIE1			/* PCIE controler 1 */
++#define CONFIG_PCIE2			/* PCIE controler 2 */
++#define CONFIG_PCIE3			/* PCIE controler 3 */
++#define CONFIG_PCIE4			/* PCIE controler 4 */
++
++#ifdef CONFIG_PCI
++#define CONFIG_FSL_PCI_INIT		/* Use common FSL init code */
++#define CONFIG_SYS_PCI_64BIT		/* enable 64-bit PCI resources */
++#endif
++
++#define CONFIG_FSL_LAW			/* Use common FSL init code */
++
++#define CONFIG_ENV_OVERWRITE
++
++#ifndef CONFIG_SYS_NO_FLASH
++#define CONFIG_FLASH_CFI_DRIVER
++#define CONFIG_SYS_FLASH_CFI
++#define CONFIG_SYS_FLASH_USE_BUFFER_WRITE
++#endif
++
++#if defined(CONFIG_SDCARD)
++#define CONFIG_SYS_EXTRA_ENV_RELOC
++#define CONFIG_ENV_IS_IN_MMC
++#define CONFIG_SYS_MMC_ENV_DEV          0
++#define CONFIG_ENV_SIZE			0x2000
++#define CONFIG_ENV_OFFSET		(512 * 0x800)
++#else
++#define CONFIG_ENV_IS_IN_FLASH
++#define CONFIG_ENV_ADDR		(CONFIG_SYS_MONITOR_BASE - CONFIG_ENV_SECT_SIZE)
++#define CONFIG_ENV_SIZE		0x2000
++#define CONFIG_ENV_SECT_SIZE	0x20000 /* 128K (one sector) */
++#endif
++
++#define CONFIG_SYS_CLK_FREQ	100000000
++#define CONFIG_DDR_CLK_FREQ	100000000
++
++/*
++ * These can be toggled for performance analysis, otherwise use default.
++ */
++#define CONFIG_SYS_CACHE_STASHING
++#define CONFIG_BACKSIDE_L2_CACHE
++#define CONFIG_SYS_INIT_L2CSR0		L2CSR0_L2E
++#define CONFIG_BTB			/* toggle branch predition */
++#define CONFIG_DDR_ECC
++#ifdef CONFIG_DDR_ECC
++#define CONFIG_ECC_INIT_VIA_DDRCONTROLLER
++#define CONFIG_MEM_INIT_VALUE		0xdeadbeef
++#endif
++
++#define CONFIG_ENABLE_36BIT_PHYS
++
++#define CONFIG_ADDR_MAP
++#define CONFIG_SYS_NUM_ADDR_MAP		64	/* number of TLB1 entries */
++
++#define CONFIG_SYS_MEMTEST_START	0x00200000	/* memtest works on */
++#define CONFIG_SYS_MEMTEST_END		0x00400000
++#define CONFIG_SYS_ALT_MEMTEST
++#define CONFIG_PANIC_HANG	/* do not reset board on panic */
++
++/*
++ *  Config the L3 Cache as L3 SRAM
++ */
++#define CONFIG_SYS_INIT_L3_ADDR		0xFFFC0000
++#define CONFIG_SYS_L3_SIZE		256 << 10
++#define CONFIG_SPL_GD_ADDR		(CONFIG_SYS_INIT_L3_ADDR + 32 * 1024)
++#ifdef CONFIG_RAMBOOT_PBL
++#define CONFIG_ENV_ADDR			(CONFIG_SPL_GD_ADDR + 4 * 1024)
++#endif
++#define CONFIG_SPL_RELOC_MALLOC_ADDR	(CONFIG_SPL_GD_ADDR + 12 * 1024)
++#define CONFIG_SPL_RELOC_MALLOC_SIZE	(30 << 10)
++#define CONFIG_SPL_RELOC_STACK		(CONFIG_SPL_GD_ADDR + 64 * 1024)
++#define CONFIG_SPL_RELOC_STACK_SIZE	(22 << 10)
++
++#define CONFIG_SYS_DCSRBAR		0xf0000000
++#define CONFIG_SYS_DCSRBAR_PHYS		0xf00000000ull
++
++/*
++ * DDR Setup
++ */
++#define CONFIG_VERY_BIG_RAM
++#define CONFIG_SYS_DDR_SDRAM_BASE	0x00000000
++#define CONFIG_SYS_SDRAM_BASE		CONFIG_SYS_DDR_SDRAM_BASE
++
++/* CONFIG_NUM_DDR_CONTROLLERS is defined in include/asm/config_mpc85xx.h */
++#define CONFIG_DIMM_SLOTS_PER_CTLR	1
++#define CONFIG_CHIP_SELECTS_PER_CTRL	1
++
++#define CONFIG_SYS_DDR_RAW_TIMING
++#define CONFIG_SYS_FSL_DDR3
++
++#define CONFIG_SYS_SDRAM_SIZE	2048	/* for fixed parameter use */
++
++/*
++ * IFC Definitions
++ */
++#ifndef CONFIG_SYS_NO_FLASH
++#define CONFIG_SYS_FLASH_BASE	0xe8000000
++#define CONFIG_SYS_FLASH_BASE_PHYS	(0xf00000000ull | CONFIG_SYS_FLASH_BASE)
++
++#define CONFIG_SYS_NOR_CSPR_EXT	(0xf)
++#define CONFIG_SYS_NOR_CSPR	(CSPR_PHYS_ADDR(CONFIG_SYS_FLASH_BASE) | \
++				CSPR_PORT_SIZE_16 | \
++				CSPR_MSEL_NOR | \
++				CSPR_V)
++#define CONFIG_SYS_NOR_AMASK	IFC_AMASK(128*1024*1024)
++
++/* NOR Flash Timing Params */
++#define CONFIG_SYS_NOR_CSOR	CSOR_NOR_TRHZ_20
++#define CONFIG_SYS_NOR_FTIM0	(FTIM0_NOR_TACSE(0x1) | \
++				FTIM0_NOR_TEADC(0x4) | \
++				FTIM0_NOR_TEAHC(0x3))
++#define CONFIG_SYS_NOR_FTIM1	(FTIM1_NOR_TACO(0x1) | \
++				FTIM1_NOR_TRAD_NOR(0x27) |\
++				FTIM1_NOR_TSEQRAD_NOR(0x00))
++#define CONFIG_SYS_NOR_FTIM2	(FTIM2_NOR_TCS(0x1) | \
++				FTIM2_NOR_TCH(0x1) | \
++				FTIM2_NOR_TWPH(0x00) | \
++				FTIM2_NOR_TWP(0x21))
++#define CONFIG_SYS_NOR_FTIM3	0x0
++
++#define CONFIG_SYS_FLASH_QUIET_TEST
++#define CONFIG_FLASH_SHOW_PROGRESS	45 /* count down from 45/5: 9..1 */
++
++#define CONFIG_SYS_MAX_FLASH_BANKS	2	/* number of banks */
++#define CONFIG_SYS_MAX_FLASH_SECT	1024	/* sectors per device */
++#define CONFIG_SYS_FLASH_ERASE_TOUT	60000	/* Flash Erase Timeout (ms) */
++#define CONFIG_SYS_FLASH_WRITE_TOUT	500	/* Flash Write Timeout (ms) */
++
++#define CONFIG_SYS_FLASH_EMPTY_INFO
++#define CONFIG_SYS_FLASH_BANKS_LIST	{CONFIG_SYS_FLASH_BASE_PHYS}
++
++
++#define CONFIG_SYS_CSPR0_EXT		CONFIG_SYS_NOR_CSPR_EXT
++#define CONFIG_SYS_CSPR0		CONFIG_SYS_NOR_CSPR
++#define CONFIG_SYS_AMASK0		CONFIG_SYS_NOR_AMASK
++#define CONFIG_SYS_CSOR0		CONFIG_SYS_NOR_CSOR
++#define CONFIG_SYS_CS0_FTIM0		CONFIG_SYS_NOR_FTIM0
++#define CONFIG_SYS_CS0_FTIM1		CONFIG_SYS_NOR_FTIM1
++#define CONFIG_SYS_CS0_FTIM2		CONFIG_SYS_NOR_FTIM2
++#define CONFIG_SYS_CS0_FTIM3		CONFIG_SYS_NOR_FTIM3
++#endif
++
++/*
++ * TDM Definition
++ */
++#define T1040_TDM_QUIRK_CCSR_BASE	0xfe000000
++
++#ifdef CONFIG_SPL_BUILD
++#define CONFIG_SYS_MONITOR_BASE	CONFIG_SPL_TEXT_BASE
++#else
++#define CONFIG_SYS_MONITOR_BASE	CONFIG_SYS_TEXT_BASE	/* start of monitor */
++#endif
++
++#if defined(CONFIG_RAMBOOT_PBL)
++#define CONFIG_SYS_RAMBOOT
++#endif
++
++#define CONFIG_BOARD_EARLY_INIT_R
++#define CONFIG_MISC_INIT_R
++
++#define CONFIG_HWCONFIG
++
++/* define to use L1 as initial stack */
++#define CONFIG_L1_INIT_RAM
++#define CONFIG_SYS_INIT_RAM_LOCK
++#define CONFIG_SYS_INIT_RAM_ADDR	0xfdd00000	/* Initial L1 address */
++#define CONFIG_SYS_INIT_RAM_ADDR_PHYS_HIGH	0xf
++#define CONFIG_SYS_INIT_RAM_ADDR_PHYS_LOW	0xfe0ec000
++/* The assembler doesn't like typecast */
++#define CONFIG_SYS_INIT_RAM_ADDR_PHYS \
++	((CONFIG_SYS_INIT_RAM_ADDR_PHYS_HIGH * 1ull << 32) | \
++	  CONFIG_SYS_INIT_RAM_ADDR_PHYS_LOW)
++#define CONFIG_SYS_INIT_RAM_SIZE		0x00004000
++
++#define CONFIG_SYS_GBL_DATA_OFFSET	(CONFIG_SYS_INIT_RAM_SIZE - \
++					GENERATED_GBL_DATA_SIZE)
++#define CONFIG_SYS_INIT_SP_OFFSET	CONFIG_SYS_GBL_DATA_OFFSET
++
++#define CONFIG_SYS_MONITOR_LEN		(768 * 1024)
++#define CONFIG_SYS_MALLOC_LEN		(4 * 1024 * 1024)
++
++/* Serial Port - controlled on board with jumper J8
++ * open - index 2
++ * shorted - index 1
++ */
++#define CONFIG_CONS_INDEX	1
++#define CONFIG_SYS_NS16550
++#define CONFIG_SYS_NS16550_SERIAL
++#define CONFIG_SYS_NS16550_REG_SIZE	1
++#define CONFIG_SYS_NS16550_CLK		(get_bus_freq(0)/2)
++
++#define CONFIG_SYS_BAUDRATE_TABLE	\
++	{300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
++
++#define CONFIG_SYS_NS16550_COM1	(CONFIG_SYS_CCSRBAR+0x11C500)
++#define CONFIG_SYS_NS16550_COM2	(CONFIG_SYS_CCSRBAR+0x11C600)
++#define CONFIG_SYS_NS16550_COM3	(CONFIG_SYS_CCSRBAR+0x11D500)
++#define CONFIG_SYS_NS16550_COM4	(CONFIG_SYS_CCSRBAR+0x11D600)
++#define CONFIG_SERIAL_MULTI		/* Enable both serial ports */
++#ifndef CONFIG_SPL_BUILD
++#define CONFIG_SYS_CONSOLE_IS_IN_ENV	/* determine from environment */
++#endif
++
++/* Use the HUSH parser */
++#define CONFIG_SYS_HUSH_PARSER
++#define CONFIG_SYS_PROMPT_HUSH_PS2 "> "
++
++#if 0 /* TODO: add support for LVDS display */
++/* Video */
++#define CONFIG_FSL_DIU_FB
++
++#ifdef CONFIG_FSL_DIU_FB
++#define CONFIG_FSL_DIU_CH7301
++#define CONFIG_SYS_DIU_ADDR	(CONFIG_SYS_CCSRBAR + 0x180000)
++#define CONFIG_VIDEO
++#define CONFIG_CMD_BMP
++#define CONFIG_CFB_CONSOLE
++#define CONFIG_CFB_CONSOLE_ANSI
++#define CONFIG_VIDEO_SW_CURSOR
++#define CONFIG_VGA_AS_SINGLE_DEVICE
++#define CONFIG_VIDEO_LOGO
++#define CONFIG_VIDEO_BMP_LOGO
++#endif
++#endif
++
++/* pass open firmware flat tree */
++#define CONFIG_OF_LIBFDT
++#define CONFIG_OF_BOARD_SETUP
++#define CONFIG_OF_STDOUT_VIA_ALIAS
++
++/* new uImage format support */
++#define CONFIG_FIT
++#define CONFIG_FIT_VERBOSE	/* enable fit_format_{error,warning}() */
++
++/* I2C */
++#define CONFIG_SYS_I2C
++#define CONFIG_SYS_I2C_FSL		/* Use FSL common I2C driver */
++#define CONFIG_SYS_FSL_I2C_SPEED	400000	/* I2C speed in Hz */
++#define CONFIG_SYS_FSL_I2C2_SPEED	400000
++#define CONFIG_SYS_FSL_I2C3_SPEED	400000
++#define CONFIG_SYS_FSL_I2C4_SPEED	400000
++#define CONFIG_SYS_FSL_I2C_SLAVE	0x7F
++#define CONFIG_SYS_FSL_I2C2_SLAVE	0x7F
++#define CONFIG_SYS_FSL_I2C3_SLAVE	0x7F
++#define CONFIG_SYS_FSL_I2C4_SLAVE	0x7F
++#define CONFIG_SYS_FSL_I2C_OFFSET	0x118000
++#define CONFIG_SYS_FSL_I2C2_OFFSET	0x118100
++#define CONFIG_SYS_FSL_I2C3_OFFSET	0x119000
++#define CONFIG_SYS_FSL_I2C4_OFFSET	0x119100
++
++/*
++ * RTC configuration
++ */
++#define RTC
++#if defined RTC
++#define CONFIG_CMD_DATE
++#define CONFIG_RTC_PCF85063             1
++#define CONFIG_SYS_I2C_RTC_ADDR         0x51
++#endif
++
++/*
++ * General PCI
++ * Memory space is mapped 1-1, but I/O space must start from 0.
++ */
++
++#ifdef CONFIG_PCI
++/* controller 1, direct to uli, tgtid 3, Base address 20000 */
++#ifdef CONFIG_PCIE1
++#define	CONFIG_SYS_PCIE1_MEM_VIRT	0x80000000
++#define	CONFIG_SYS_PCIE1_MEM_BUS	0xe0000000
++#define	CONFIG_SYS_PCIE1_MEM_PHYS	0xc00000000ull
++#define CONFIG_SYS_PCIE1_MEM_SIZE	0x10000000	/* 256M */
++#define CONFIG_SYS_PCIE1_IO_VIRT	0xf8000000
++#define CONFIG_SYS_PCIE1_IO_BUS		0x00000000
++#define CONFIG_SYS_PCIE1_IO_PHYS	0xff8000000ull
++#define CONFIG_SYS_PCIE1_IO_SIZE	0x00010000	/* 64k */
++#endif
++
++/* controller 2, Slot 2, tgtid 2, Base address 201000 */
++#ifdef CONFIG_PCIE2
++#define CONFIG_SYS_PCIE2_MEM_VIRT	0x90000000
++#define CONFIG_SYS_PCIE2_MEM_BUS	0xe0000000
++#define CONFIG_SYS_PCIE2_MEM_PHYS	0xc10000000ull
++#define CONFIG_SYS_PCIE2_MEM_SIZE	0x10000000	/* 256M */
++#define CONFIG_SYS_PCIE2_IO_VIRT	0xf8010000
++#define CONFIG_SYS_PCIE2_IO_BUS		0x00000000
++#define CONFIG_SYS_PCIE2_IO_PHYS	0xff8010000ull
++#define CONFIG_SYS_PCIE2_IO_SIZE	0x00010000	/* 64k */
++#endif
++
++/* controller 3, Slot 1, tgtid 1, Base address 202000 */
++#ifdef CONFIG_PCIE3
++#define CONFIG_SYS_PCIE3_MEM_VIRT	0xa0000000
++#define CONFIG_SYS_PCIE3_MEM_BUS	0xe0000000
++#define CONFIG_SYS_PCIE3_MEM_PHYS	0xc20000000ull
++#define CONFIG_SYS_PCIE3_MEM_SIZE	0x10000000	/* 256M */
++#define CONFIG_SYS_PCIE3_IO_VIRT	0xf8020000
++#define CONFIG_SYS_PCIE3_IO_BUS		0x00000000
++#define CONFIG_SYS_PCIE3_IO_PHYS	0xff8020000ull
++#define CONFIG_SYS_PCIE3_IO_SIZE	0x00010000	/* 64k */
++#endif
++
++/* controller 4, Base address 203000 */
++#ifdef CONFIG_PCIE4
++#define CONFIG_SYS_PCIE4_MEM_VIRT	0xb0000000
++#define CONFIG_SYS_PCIE4_MEM_BUS	0xe0000000
++#define CONFIG_SYS_PCIE4_MEM_PHYS	0xc30000000ull
++#define CONFIG_SYS_PCIE4_MEM_SIZE	0x10000000	/* 256M */
++#define CONFIG_SYS_PCIE4_IO_VIRT	0xf8030000
++#define CONFIG_SYS_PCIE4_IO_BUS		0x00000000
++#define CONFIG_SYS_PCIE4_IO_PHYS	0xff8030000ull
++#define CONFIG_SYS_PCIE4_IO_SIZE	0x00010000	/* 64k */
++#endif
++
++#define CONFIG_PCI_PNP			/* do pci plug-and-play */
++#define CONFIG_E1000
++
++#define CONFIG_PCI_SCAN_SHOW		/* show pci devices on startup */
++#define CONFIG_DOS_PARTITION
++#endif	/* CONFIG_PCI */
++
++/* SATA */
++#define CONFIG_FSL_SATA_V2
++#ifdef CONFIG_FSL_SATA_V2
++#define CONFIG_LIBATA
++#define CONFIG_FSL_SATA
++
++#define CONFIG_SYS_SATA_MAX_DEVICE	1
++#define CONFIG_SATA1
++#define CONFIG_SYS_SATA1		CONFIG_SYS_MPC85xx_SATA1_ADDR
++#define CONFIG_SYS_SATA1_FLAGS		FLAGS_DMA
++
++#define CONFIG_LBA48
++#define CONFIG_CMD_SATA
++#define CONFIG_DOS_PARTITION
++#define CONFIG_CMD_EXT2
++#endif
++
++/*
++* USB
++*/
++#define CONFIG_HAS_FSL_DR_USB
++
++#ifdef CONFIG_HAS_FSL_DR_USB
++#define CONFIG_USB_EHCI
++
++#ifdef CONFIG_USB_EHCI
++#define CONFIG_CMD_USB
++#define CONFIG_USB_STORAGE
++#define CONFIG_USB_EHCI_FSL
++#define CONFIG_EHCI_HCD_INIT_AFTER_RESET
++#define CONFIG_CMD_EXT2
++#endif
++#endif
++
++#define CONFIG_MMC
++
++#ifdef CONFIG_MMC
++#define CONFIG_FSL_ESDHC
++#define CONFIG_SYS_FSL_ESDHC_ADDR       CONFIG_SYS_MPC85xx_ESDHC_ADDR
++#define CONFIG_ESDHC_DETECT_QUIRK 1 /* TODO: card detect at the moment not functional, remove later */
++#define CONFIG_CMD_MMC
++#define CONFIG_GENERIC_MMC
++#define CONFIG_CMD_EXT2
++#define CONFIG_CMD_FAT
++#define CONFIG_DOS_PARTITION
++#endif
++
++/* Qman/Bman */
++#ifndef CONFIG_NOBQFMAN
++#define CONFIG_SYS_DPAA_QBMAN		/* Support Q/Bman */
++#define CONFIG_SYS_BMAN_NUM_PORTALS	10
++#define CONFIG_SYS_BMAN_MEM_BASE	0xf4000000
++#define CONFIG_SYS_BMAN_MEM_PHYS	0xff4000000ull
++#define CONFIG_SYS_BMAN_MEM_SIZE	0x02000000
++#define CONFIG_SYS_BMAN_SP_CENA_SIZE    0x4000
++#define CONFIG_SYS_BMAN_SP_CINH_SIZE    0x1000
++#define CONFIG_SYS_BMAN_CENA_BASE       CONFIG_SYS_BMAN_MEM_BASE
++#define CONFIG_SYS_BMAN_CENA_SIZE       (CONFIG_SYS_BMAN_MEM_SIZE >> 1)
++#define CONFIG_SYS_BMAN_CINH_BASE       (CONFIG_SYS_BMAN_MEM_BASE + \
++					CONFIG_SYS_BMAN_CENA_SIZE)
++#define CONFIG_SYS_BMAN_CINH_SIZE       (CONFIG_SYS_BMAN_MEM_SIZE >> 1)
++#define CONFIG_SYS_BMAN_SWP_ISDR_REG	0xE08
++#define CONFIG_SYS_QMAN_NUM_PORTALS	10
++#define CONFIG_SYS_QMAN_MEM_BASE	0xf6000000
++#define CONFIG_SYS_QMAN_MEM_PHYS	0xff6000000ull
++#define CONFIG_SYS_QMAN_MEM_SIZE	0x02000000
++#define CONFIG_SYS_QMAN_SP_CENA_SIZE    0x4000
++#define CONFIG_SYS_QMAN_SP_CINH_SIZE    0x1000
++#define CONFIG_SYS_QMAN_CENA_BASE       CONFIG_SYS_QMAN_MEM_BASE
++#define CONFIG_SYS_QMAN_CENA_SIZE       (CONFIG_SYS_QMAN_MEM_SIZE >> 1)
++#define CONFIG_SYS_QMAN_CINH_BASE       (CONFIG_SYS_QMAN_MEM_BASE + \
++					CONFIG_SYS_QMAN_CENA_SIZE)
++#define CONFIG_SYS_QMAN_CINH_SIZE       (CONFIG_SYS_QMAN_MEM_SIZE >> 1)
++#define CONFIG_SYS_QMAN_SWP_ISDR_REG	0xE08
++
++#define  CONFIG_SYS_DPAA_FMAN
++#define CONFIG_SYS_DPAA_PME
++
++#if 0 /* TODO */
++#define CONFIG_QE
++#define CONFIG_U_QE
++#endif
++
++#if defined(CONFIG_SDCARD)
++/*
++ * PBL SD boot image should stored at 0x1000(8 blocks), the size of the image is
++ * about 1MB (2048 blocks), Env is stored after the image, and the env size is
++ * 0x2000 (16 blocks), 8 + 2048 + 16 = 2072, enlarge it to 2080.
++ */
++#define CONFIG_SYS_QE_FMAN_FW_IN_MMC
++#define CONFIG_SYS_FMAN_FW_ADDR	(512 * 0x820)
++#else
++#define CONFIG_SYS_QE_FMAN_FW_IN_NOR
++#define CONFIG_SYS_FMAN_FW_ADDR		0xEFF00000
++#endif
++
++#if 0  /* TODO */
++#if defined(CONFIG_SDCARD)
++#define CONFIG_SYS_QE_FW_ADDR		(512 * 0x920)
++#else
++#define CONFIG_SYS_QE_FW_ADDR		0xEFF10000
++#endif
++#endif
++
++
++#define CONFIG_SYS_QE_FMAN_FW_LENGTH	0x10000
++#define CONFIG_SYS_FDT_PAD		(0x3000 + CONFIG_SYS_QE_FMAN_FW_LENGTH)
++#endif /* CONFIG_NOBQFMAN */
++
++#ifdef CONFIG_SYS_DPAA_FMAN
++#define CONFIG_FMAN_ENET
++#endif
++
++#ifdef CONFIG_FMAN_ENET
++#define CONFIG_SYS_SGMII1_PHY_ADDR		0x1D
++#define CONFIG_SYS_SGMII2_PHY_ADDR		0x03
++#define CONFIG_SYS_SGMII3_PHY_ADDR		0x1C
++#define CONFIG_SYS_SGMII4_PHY_ADDR		0x01
++#define CONFIG_SYS_RGMII1_PHY_ADDR		0x0E
++#define CONFIG_SYS_RGMII2_PHY_ADDR		0x05
++
++#define CONFIG_MII		/* MII PHY management */
++#define CONFIG_ETHPRIME		"FM1@DTSEC4"
++#define CONFIG_PHY_GIGE		/* Include GbE speed/duplex detection */
++#endif
++
++/*
++ * Environment
++ */
++#define CONFIG_LOADS_ECHO		/* echo on for serial download */
++#define CONFIG_SYS_LOADS_BAUD_CHANGE	/* allow baudrate change */
++
++/*
++ * Command line configuration.
++ */
++#define CONFIG_CMD_DHCP
++#define CONFIG_CMD_ELF
++#define CONFIG_CMD_ERRATA
++#define CONFIG_CMD_GREPENV
++#define CONFIG_CMD_IRQ
++#define CONFIG_CMD_I2C
++#define CONFIG_CMD_MII
++#define CONFIG_CMD_PING
++#define CONFIG_CMD_REGINFO
++
++#ifdef CONFIG_PCI
++#define CONFIG_CMD_PCI
++#endif
++
++/* Hash command with SHA acceleration supported in hardware */
++#ifdef CONFIG_FSL_CAAM
++#define CONFIG_CMD_HASH
++#define CONFIG_SHA_HW_ACCEL
++#endif
++
++/*
++ * Miscellaneous configurable options
++ */
++#define CONFIG_SYS_LONGHELP			/* undef to save memory	*/
++#define CONFIG_CMDLINE_EDITING			/* Command-line editing */
++#define CONFIG_AUTO_COMPLETE			/* add autocompletion support */
++#define CONFIG_SYS_LOAD_ADDR	0x2000000	/* default load address */
++#ifdef CONFIG_CMD_KGDB
++#define CONFIG_SYS_CBSIZE	1024		/* Console I/O Buffer Size */
++#else
++#define CONFIG_SYS_CBSIZE	256		/* Console I/O Buffer Size */
++#endif
++#define CONFIG_SYS_PBSIZE (CONFIG_SYS_CBSIZE+sizeof(CONFIG_SYS_PROMPT)+16)
++#define CONFIG_SYS_MAXARGS	16		/* max number of command args */
++#define CONFIG_SYS_BARGSIZE	CONFIG_SYS_CBSIZE/* Boot Argument Buffer Size */
++
++/*
++ * For booting Linux, the board info and command line data
++ * have to be in the first 64 MB of memory, since this is
++ * the maximum mapped by the Linux kernel during initialization.
++ */
++#define CONFIG_SYS_BOOTMAPSZ	(64 << 20)	/* Initial map for Linux*/
++#define CONFIG_SYS_BOOTM_LEN	(64 << 20)	/* Increase max gunzip size */
++
++#ifdef CONFIG_CMD_KGDB
++#define CONFIG_KGDB_BAUDRATE	230400	/* speed to run kgdb serial port */
++#endif
++
++/*
++ * Dynamic MTD Partition support with mtdparts
++ */
++#ifndef CONFIG_SYS_NO_FLASH
++#define CONFIG_MTD_DEVICE
++#define CONFIG_MTD_PARTITIONS
++#define CONFIG_CMD_MTDPARTS
++#define CONFIG_FLASH_CFI_MTD
++#define MTDIDS_DEFAULT "nor0=fe8000000.nor"
++#define MTDPARTS_DEFAULT	"mtdparts=fe8000000.nor:1m(uboot),5m(kernel)," \
++				"128k(dtb),96m(fs),-(user);"
++#endif
++
++/*
++ * Environment Configuration
++ */
++#define CONFIG_ROOTPATH		"/opt/nfsroot"
++#define CONFIG_BOOTFILE		"uImage"
++#define CONFIG_UBOOTPATH	"u-boot.bin"	/* U-Boot image on TFTP server*/
++
++/* default location for tftp and bootm */
++#define CONFIG_LOADADDR		1000000
++
++#define CONFIG_BOOTDELAY	10	/*-1 disables auto-boot*/
++
++#define CONFIG_BAUDRATE	115200
++
++#define __USB_PHY_TYPE	utmi
++#define RAMDISKFILE	"tqmt1042/ramdisk.uboot"
++#define FDTFILE		"tqmt1042/tqmt1042.dtb"
++
++#ifdef CONFIG_FSL_DIU_FB
++#define DIU_ENVIRONMENT "video-mode=fslfb:1024x768-32@60,monitor=dvi" /* TODO */
++#else
++#define DIU_ENVIRONMENT
++#endif
++
++/* TODO */
++#define	CONFIG_EXTRA_ENV_SETTINGS				\
++	"hwconfig=fsl_ddr:bank_intlv=cs0_cs1;"			\
++	"usb1:dr_mode=host,phy_type=" __stringify(__USB_PHY_TYPE) ";"\
++	"usb2:dr_mode=host,phy_type=" __stringify(__USB_PHY_TYPE) "\0"\
++	"netdev=eth0\0"						\
++	"video-mode=" __stringify(DIU_ENVIRONMENT) "\0"		\
++	"uboot=" __stringify(CONFIG_UBOOTPATH) "\0"		\
++	"ubootaddr=" __stringify(CONFIG_SYS_TEXT_BASE) "\0"	\
++	"tftpflash=tftpboot $loadaddr $uboot && "		\
++	"protect off $ubootaddr +$filesize && "			\
++	"erase $ubootaddr +$filesize && "			\
++	"cp.b $loadaddr $ubootaddr $filesize && "		\
++	"protect on $ubootaddr +$filesize && "			\
++	"cmp.b $loadaddr $ubootaddr $filesize\0"		\
++	"consoledev=ttyS0\0"					\
++	"ramdiskaddr=2000000\0"					\
++	"ramdiskfile=" __stringify(RAMDISKFILE) "\0"		\
++	"fdtaddr=c00000\0"					\
++	"fdtfile=" __stringify(FDTFILE) "\0"			\
++	"bdev=sda3\0"
++
++#define CONFIG_LINUX                       \
++	"setenv bootargs root=/dev/ram rw "            \
++	"console=$consoledev,$baudrate $othbootargs;"  \
++	"setenv ramdiskaddr 0x02000000;"               \
++	"setenv fdtaddr 0x00c00000;"		       \
++	"setenv loadaddr 0x1000000;"		       \
++	"bootm $loadaddr $ramdiskaddr $fdtaddr"
++
++#define CONFIG_HDBOOT					\
++	"setenv bootargs root=/dev/$bdev rw "		\
++	"console=$consoledev,$baudrate $othbootargs;"	\
++	"tftp $loadaddr $bootfile;"			\
++	"tftp $fdtaddr $fdtfile;"			\
++	"bootm $loadaddr - $fdtaddr"
++
++#define CONFIG_NFSBOOTCOMMAND			\
++	"setenv bootargs root=/dev/nfs rw "	\
++	"nfsroot=$serverip:$rootpath "		\
++	"ip=$ipaddr:$serverip:$gatewayip:$netmask:$hostname:$netdev:off " \
++	"console=$consoledev,$baudrate $othbootargs;"	\
++	"tftp $loadaddr $bootfile;"		\
++	"tftp $fdtaddr $fdtfile;"		\
++	"bootm $loadaddr - $fdtaddr"
++
++#define CONFIG_RAMBOOTCOMMAND				\
++	"setenv bootargs root=/dev/ram rw "		\
++	"console=$consoledev,$baudrate $othbootargs;"	\
++	"tftp $ramdiskaddr $ramdiskfile;"		\
++	"tftp $loadaddr $bootfile;"			\
++	"tftp $fdtaddr $fdtfile;"			\
++	"bootm $loadaddr $ramdiskaddr $fdtaddr"
++
++#define CONFIG_BOOTCOMMAND		CONFIG_LINUX
++
++#ifdef CONFIG_SECURE_BOOT
++#include <asm/fsl_secure_boot.h>
++#define CONFIG_CMD_BLOB
++#endif
++
++#endif	/* __CONFIG_H */
+-- 
+1.9.1
+

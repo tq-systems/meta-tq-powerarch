@@ -1,0 +1,35 @@
+From 65b910cab213c18afeeab61fb729ad1d04da96b2 Mon Sep 17 00:00:00 2001
+From: Alexander Graf <agraf@suse.de>
+Date: Mon, 16 May 2016 20:52:42 +0200
+Subject: [PATCH] phy dp83867: Fix compilation with CONFIG_OF_MDIO=m
+
+When CONFIG_OF_MDIO is configured as module, the #define for it really
+is CONFIG_OF_MDIO_MODULE, not CONFIG_OF_MDIO. So if we are compiling it
+as module, the dp83867 doesn't see that OF_MDIO was selected and doesn't
+read the dt rgmii parameters.
+
+The fix is simple: Use IS_ENABLED(). It checks for both - module as well
+as compiled in code.
+
+Signed-off-by: Alexander Graf <agraf@suse.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/phy/dp83867.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
+index 3fe8e45..6de4d58 100644
+--- a/drivers/net/phy/dp83867.c
++++ b/drivers/net/phy/dp83867.c
+@@ -100,7 +100,7 @@ static int dp83867_config_intr(struct phy_device *phydev)
+ 	return phy_write(phydev, MII_DP83867_MICR, micr_status);
+ }
+ 
+-#ifdef CONFIG_OF_MDIO
++#if IS_ENABLED(CONFIG_OF_MDIO)
+ static int dp83867_of_init(struct phy_device *phydev)
+ {
+ 	struct dp83867_private *dp83867 = phydev->priv;
+-- 
+1.9.1
+

@@ -1,0 +1,196 @@
+From c1b73471f7041134b9a3ed3d99e9e0c18ec75ce7 Mon Sep 17 00:00:00 2001
+From: Thierry Reding <treding@nvidia.com>
+Date: Wed, 9 Sep 2015 15:29:22 +0200
+Subject: [PATCH] soc/tegra: Provide per-SoC Kconfig symbols
+
+Move per-SoC generation Kconfig symbols to drivers/soc/tegra/Kconfig to
+gather them all in a single place. This directory is a natural location
+for these options since it already contains the drivers that are shared
+across 32-bit and 64-bit ARM architectures.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ arch/arm/mach-tegra/Kconfig  | 52 +--------------------------------
+ arch/arm64/Kconfig.platforms | 12 --------
+ drivers/soc/Kconfig          |  1 +
+ drivers/soc/tegra/Kconfig    | 69 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 71 insertions(+), 63 deletions(-)
+ create mode 100644 drivers/soc/tegra/Kconfig
+
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 0fa4c5f..5db40b2 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -1,4 +1,4 @@
+-menuconfig ARCH_TEGRA
++config ARCH_TEGRA
+ 	bool "NVIDIA Tegra" if ARCH_MULTI_V7
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
+@@ -16,53 +16,3 @@ menuconfig ARCH_TEGRA
+ 	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  This enables support for NVIDIA Tegra based systems.
+-
+-if ARCH_TEGRA
+-
+-config ARCH_TEGRA_2x_SOC
+-	bool "Enable support for Tegra20 family"
+-	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
+-	select ARM_ERRATA_720789
+-	select ARM_ERRATA_754327 if SMP
+-	select ARM_ERRATA_764369 if SMP
+-	select PINCTRL_TEGRA20
+-	select PL310_ERRATA_727915 if CACHE_L2X0
+-	select PL310_ERRATA_769419 if CACHE_L2X0
+-	select TEGRA_TIMER
+-	help
+-	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+-	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+-
+-config ARCH_TEGRA_3x_SOC
+-	bool "Enable support for Tegra30 family"
+-	select ARM_ERRATA_754322
+-	select ARM_ERRATA_764369 if SMP
+-	select PINCTRL_TEGRA30
+-	select PL310_ERRATA_769419 if CACHE_L2X0
+-	select TEGRA_TIMER
+-	help
+-	  Support for NVIDIA Tegra T30 processor family, based on the
+-	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+-
+-config ARCH_TEGRA_114_SOC
+-	bool "Enable support for Tegra114 family"
+-	select ARM_ERRATA_798181 if SMP
+-	select ARM_L1_CACHE_SHIFT_6
+-	select HAVE_ARM_ARCH_TIMER
+-	select PINCTRL_TEGRA114
+-	select TEGRA_TIMER
+-	help
+-	  Support for NVIDIA Tegra T114 processor family, based on the
+-	  ARM CortexA15MP CPU
+-
+-config ARCH_TEGRA_124_SOC
+-	bool "Enable support for Tegra124 family"
+-	select ARM_L1_CACHE_SHIFT_6
+-	select HAVE_ARM_ARCH_TIMER
+-	select PINCTRL_TEGRA124
+-	select TEGRA_TIMER
+-	help
+-	  Support for NVIDIA Tegra T124 processor family, based on the
+-	  ARM CortexA15MP CPU
+-
+-endif
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 4043c35..2c04116 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -86,18 +86,6 @@ config ARCH_TEGRA
+ 	help
+ 	  This enables support for the NVIDIA Tegra SoC family.
+ 
+-config ARCH_TEGRA_132_SOC
+-	bool "NVIDIA Tegra132 SoC"
+-	depends on ARCH_TEGRA
+-	select PINCTRL_TEGRA124
+-	select USB_ULPI if USB_PHY
+-	select USB_ULPI_VIEWPORT if USB_PHY
+-	help
+-	  Enable support for NVIDIA Tegra132 SoC, based on the Denver
+-	  ARMv8 CPU.  The Tegra132 SoC is similar to the Tegra124 SoC,
+-	  but contains an NVIDIA Denver CPU complex in place of
+-	  Tegra124's "4+1" Cortex-A15 CPU complex.
+-
+ config ARCH_SPRD
+ 	bool "Spreadtrum SoC platform"
+ 	help
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 4e853ed..a8d72ba 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -5,6 +5,7 @@ source "drivers/soc/mediatek/Kconfig"
+ source "drivers/soc/qcom/Kconfig"
+ source "drivers/soc/rockchip/Kconfig"
+ source "drivers/soc/sunxi/Kconfig"
++source "drivers/soc/tegra/Kconfig"
+ source "drivers/soc/ti/Kconfig"
+ source "drivers/soc/versatile/Kconfig"
+ 
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+new file mode 100644
+index 0000000..fe59d1f
+--- /dev/null
++++ b/drivers/soc/tegra/Kconfig
+@@ -0,0 +1,69 @@
++if ARCH_TEGRA
++
++# 32-bit ARM SoCs
++if ARM
++
++config ARCH_TEGRA_2x_SOC
++	bool "Enable support for Tegra20 family"
++	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
++	select ARM_ERRATA_720789
++	select ARM_ERRATA_754327 if SMP
++	select ARM_ERRATA_764369 if SMP
++	select PINCTRL_TEGRA20
++	select PL310_ERRATA_727915 if CACHE_L2X0
++	select PL310_ERRATA_769419 if CACHE_L2X0
++	select TEGRA_TIMER
++	help
++	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
++	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
++
++config ARCH_TEGRA_3x_SOC
++	bool "Enable support for Tegra30 family"
++	select ARM_ERRATA_754322
++	select ARM_ERRATA_764369 if SMP
++	select PINCTRL_TEGRA30
++	select PL310_ERRATA_769419 if CACHE_L2X0
++	select TEGRA_TIMER
++	help
++	  Support for NVIDIA Tegra T30 processor family, based on the
++	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
++
++config ARCH_TEGRA_114_SOC
++	bool "Enable support for Tegra114 family"
++	select ARM_ERRATA_798181 if SMP
++	select ARM_L1_CACHE_SHIFT_6
++	select HAVE_ARM_ARCH_TIMER
++	select PINCTRL_TEGRA114
++	select TEGRA_TIMER
++	help
++	  Support for NVIDIA Tegra T114 processor family, based on the
++	  ARM CortexA15MP CPU
++
++config ARCH_TEGRA_124_SOC
++	bool "Enable support for Tegra124 family"
++	select ARM_L1_CACHE_SHIFT_6
++	select HAVE_ARM_ARCH_TIMER
++	select PINCTRL_TEGRA124
++	select TEGRA_TIMER
++	help
++	  Support for NVIDIA Tegra T124 processor family, based on the
++	  ARM CortexA15MP CPU
++
++endif
++
++# 64-bit ARM SoCs
++if ARM64
++
++config ARCH_TEGRA_132_SOC
++	bool "NVIDIA Tegra132 SoC"
++	select PINCTRL_TEGRA124
++	select USB_ULPI if USB_PHY
++	select USB_ULPI_VIEWPORT if USB_PHY
++	help
++	  Enable support for NVIDIA Tegra132 SoC, based on the Denver
++	  ARMv8 CPU.  The Tegra132 SoC is similar to the Tegra124 SoC,
++	  but contains an NVIDIA Denver CPU complex in place of
++	  Tegra124's "4+1" Cortex-A15 CPU complex.
++
++endif
++endif
+-- 
+1.9.1
+

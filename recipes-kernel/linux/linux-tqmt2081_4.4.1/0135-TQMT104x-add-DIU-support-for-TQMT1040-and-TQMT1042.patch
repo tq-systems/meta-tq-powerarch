@@ -1,0 +1,30 @@
+From 651c9557f18956c47857b946544552bab8e223a1 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Fri, 25 Nov 2016 15:44:03 +0100
+Subject: [PATCH] TQMT104x: add DIU support for TQMT1040 and TQMT1042
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ arch/powerpc/platforms/85xx/corenet_diu.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/powerpc/platforms/85xx/corenet_diu.c b/arch/powerpc/platforms/85xx/corenet_diu.c
+index 28e3243..79ff4a6 100644
+--- a/arch/powerpc/platforms/85xx/corenet_diu.c
++++ b/arch/powerpc/platforms/85xx/corenet_diu.c
+@@ -258,6 +258,12 @@ static const struct of_device_id corenet_board_matches[] = {
+ 	{
+ 		.compatible = "fsl,T1042D4RDB",
+ 	},
++        {
++                .compatible = "tqc,TQMT1042",
++        },
++        {
++                .compatible = "tqc,TQMT1040",
++        },
+ 	{},
+ };
+ 
+-- 
+1.9.1
+

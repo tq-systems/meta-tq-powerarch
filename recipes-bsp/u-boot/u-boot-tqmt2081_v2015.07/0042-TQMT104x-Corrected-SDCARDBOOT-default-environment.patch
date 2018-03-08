@@ -1,0 +1,31 @@
+From 257515fa713501cd6d5e1904a8280721de5110c5 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Fri, 25 Nov 2016 11:26:38 +0100
+Subject: [PATCH] TQMT104x: Corrected SDCARDBOOT default environment
+
+Now uses environment variables for uImage and fdtfile
+instead of hard set filenames.
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ include/configs/TQMT104x.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/configs/TQMT104x.h b/include/configs/TQMT104x.h
+index add17d0..534f1c8 100644
+--- a/include/configs/TQMT104x.h
++++ b/include/configs/TQMT104x.h
+@@ -732,8 +732,8 @@
+ 	"setenv bootargs root=/dev/mmcblk0p2 rw rootwait " \
+ 	"ip=$ipaddr:$serverip:$gatewayip:$netmask:$hostname:$netdev:off " \
+ 	"console=$consoledev,$baudrate $othbootargs; "		\
+-	"fatload mmc 0:1 $loadaddr uImage; " \
+-	"fatload mmc 0:1 $fdtaddr tqmt1042.dtb; " \
++	"fatload mmc 0:1 $loadaddr $bootfile " \
++	"fatload mmc 0:1 $fdtaddr &fdtfile " \
+ 	"bootm $loadaddr - $fdtaddr"
+ 
+ 
+-- 
+1.9.1
+

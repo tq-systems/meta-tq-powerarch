@@ -1,0 +1,28 @@
+From b27080db01b36637bca04a26ed3dc10932ce0231 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 21 Dec 2016 12:26:16 +0100
+Subject: [PATCH] TQMT104x: automatic read MAC address from EEPROM
+
+Change EEPROM address length
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ board/tqc/tqmt104x/eth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/board/tqc/tqmt104x/eth.c b/board/tqc/tqmt104x/eth.c
+index 0dd96c0..4b43882 100644
+--- a/board/tqc/tqmt104x/eth.c
++++ b/board/tqc/tqmt104x/eth.c
+@@ -18,7 +18,7 @@
+ #include <hwconfig.h>
+ 
+ #define CONFIG_SYS_MODULE_EEPROM         	0x50
+-#define CONFIG_SYS_MODULE_EEPROM_ADLEN          0x2
++#define CONFIG_SYS_MODULE_EEPROM_ADLEN          0x1
+ #define CONFIG_SYS_MODULE_EEPROM_MAC_AD_OFFSET  0x20
+ 
+ static int eth_phy_qsgmii_reprogram = 0;
+-- 
+1.9.1
+

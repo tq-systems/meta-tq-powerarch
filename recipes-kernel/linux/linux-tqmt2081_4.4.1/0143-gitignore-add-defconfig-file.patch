@@ -1,0 +1,25 @@
+From 3a4e18d91ecab3797c6ecca0a9cbbb854df1932c Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 1 Mar 2018 14:07:13 +0100
+Subject: [PATCH] gitignore: add defconfig file
+
+defconfig file create by make savedefconfig is ignored by git
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ .gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index fd3a355..7f40fb5 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -112,3 +112,5 @@ all.config
+ 
+ # Kdevelop4
+ *.kdev4
++
++/defconfig
+-- 
+1.9.1
+

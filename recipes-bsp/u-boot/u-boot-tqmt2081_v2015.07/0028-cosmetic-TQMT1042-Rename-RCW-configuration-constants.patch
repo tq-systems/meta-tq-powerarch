@@ -1,0 +1,45 @@
+From 443307b7cbc43a879e4bc93fb6eb592c2fac9e70 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Konrad=20Gr=C3=A4fe?= <k.graefe@gateware.de>
+Date: Fri, 7 Oct 2016 14:19:36 +0200
+Subject: [PATCH] [cosmetic] TQMT1042: Rename RCW configuration constants
+
+---
+ board/tqc/tqmt1042/Kconfig | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/board/tqc/tqmt1042/Kconfig b/board/tqc/tqmt1042/Kconfig
+index d2926f5..95937aa 100644
+--- a/board/tqc/tqmt1042/Kconfig
++++ b/board/tqc/tqmt1042/Kconfig
+@@ -11,16 +11,16 @@ config SYS_CONFIG_NAME
+ 
+ choice
+ 	prompt "TQMT1042 RCW configuration file"
+-	default TQMT1042_RCW_CFG_SERDES86
++	default RCW_CFG_TQMT1042_SERDES86
+ 	help
+ 	  select the RCW configuration file to be used for TQMT1042
+ 
+-config TQMT1042_RCW_CFG_SERDES86
++config RCW_CFG_TQMT1042_SERDES86
+ 	bool "RCW configuration for SERDES mode = 86, default RCW configuration"
+ 	help
+ 	  Select SERDES mode = 86 in reset configuration word.
+ 
+-config TQMT1042_RCW_CFG_SERDES88
++config RCW_CFG_TQMT1042_SERDES88
+ 	bool "RCW configuration for SERDES mode = 88"
+ 	help
+ 	  Select SERDES mode = 88 in reset configuration word.
+@@ -29,6 +29,6 @@ endchoice
+ 
+ config SYS_FSL_RCW
+ 	string
+-	default "board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg" if TQMT1042_RCW_CFG_SERDES86
+-	default "board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg" if TQMT1042_RCW_CFG_SERDES88
++	default "board/tqc/tqmt1042/tqmt1042_serdes86_rcw.cfg" if RCW_CFG_TQMT1042_SERDES86
++	default "board/tqc/tqmt1042/tqmt1042_serdes88_rcw.cfg" if RCW_CFG_TQMT1042_SERDES88
+ endif
+-- 
+1.9.1
+

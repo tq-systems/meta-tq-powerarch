@@ -1,0 +1,24 @@
+From ba1d7004f581819109bef6db6821865325bc4b94 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Wed, 17 Feb 2016 13:24:20 +0100
+Subject: [PATCH] add define for TQ Systems TQMT1042 SOC in corenet_generic.c
+
+---
+ arch/powerpc/platforms/85xx/corenet_generic.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/powerpc/platforms/85xx/corenet_generic.c b/arch/powerpc/platforms/85xx/corenet_generic.c
+index 46d05c9..f5d9ba0 100644
+--- a/arch/powerpc/platforms/85xx/corenet_generic.c
++++ b/arch/powerpc/platforms/85xx/corenet_generic.c
+@@ -162,6 +162,7 @@ static const char * const boards[] __initconst = {
+ 	"fsl,T1042RDB_PI",
+ 	"keymile,kmcoge4",
+ 	"varisys,CYRUS",
++	"tqc,TQMT1042",
+ 	NULL
+ };
+ 
+-- 
+1.9.1
+
