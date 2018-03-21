@@ -1,0 +1,32 @@
+From f2bc7013d2841bf1bb2328ac0944f1961ec52851 Mon Sep 17 00:00:00 2001
+From: Stefan Lange <s.lange@gateware.de>
+Date: Thu, 15 Mar 2018 11:25:12 +0100
+Subject: [PATCH] TQMT2081: RCW: update SerDes 0x71 RCW
+
+Consistent with TQMT2081_RCW-Config.0008.xlsm.
+
+Signed-off-by: Stefan Lange <s.lange@gateware.de>
+---
+ board/tqc/tqmt2081/tqmt2081_serdes71_rcw.cfg | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/board/tqc/tqmt2081/tqmt2081_serdes71_rcw.cfg b/board/tqc/tqmt2081/tqmt2081_serdes71_rcw.cfg
+index 38dbaa1..62b33ba 100644
+--- a/board/tqc/tqmt2081/tqmt2081_serdes71_rcw.cfg
++++ b/board/tqc/tqmt2081/tqmt2081_serdes71_rcw.cfg
+@@ -2,8 +2,8 @@
+ aa55aa55 010e0100
+ 
+ #SerDes=0x71_0x15, Core:1800MHz, DDR:1867MT/s TODO
+-0C0E0012 12000000 00000000 00000000
+-71000002 80000001 EC027000 01000000
+-00000000 00000000 00000000 0001A800
+-00000000 01565005 00000000 00000000
++0C070012 12000000 00000000 00000000
++71000002 00000000 EC027000 C1000000
++00000000 00000000 00000000 0002A800
++00000000 02800002 00000000 00000004
+ 
+-- 
+1.9.1
+

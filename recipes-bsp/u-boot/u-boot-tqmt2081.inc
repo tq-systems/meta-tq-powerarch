@@ -29,7 +29,7 @@ do_compile_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION = "-g5805c30"
+LOCALVERSION = "-gf2bc701"
 SRC_URI += "file://0001-Add-support-for-PCF85063-RTC-chip-of-NXP-semiconduct.patch"
 SRC_URI += "file://0002-Add-initial-board-support-for-TQMT1042.patch"
 SRC_URI += "file://0003-Modified-board-configuration-TQMT1042.h.patch"
@@ -91,3 +91,5 @@ SRC_URI += "file://0058-Add-support-for-the-TQMT2081-module-on-a-STKT2081-ba.pat
 SRC_URI += "file://0059-TQMT2081-add-defconfig.patch"
 SRC_URI += "file://0060-gitignore-add-defconfig-file.patch"
 SRC_URI += "file://0061-TQMT2081-add-SD-card-defconfig.patch"
+SRC_URI += "file://0062-TQMT2081-vid-check-uC-register-if-setting-voltage-wa.patch"
+SRC_URI += "file://0063-TQMT2081-RCW-update-SerDes-0x71-RCW.patch"
