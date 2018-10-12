@@ -43,7 +43,7 @@ do_configure_prepend() {
 }
 
 ### Patch series -- DO NOT EDIT BELOW THIS LINE!
-LOCALVERSION .= "-gecd51ee"
+LOCALVERSION .= "-g9e59f4b"
 SRC_URI += "file://0001-fsl-fman-Add-FMan-MURAM-support.patch"
 SRC_URI += "file://0002-fsl-fman-Add-FMan-support.patch"
 SRC_URI += "file://0003-fsl-fman-Add-FMan-MAC-support.patch"
@@ -196,3 +196,4 @@ SRC_URI += "file://0149-TQMT2081-dts-add-xfi_tx_dis-gpio-hog-extend-i2c-comm.pat
 SRC_URI += "file://0150-TQMT2081-dts-add-MAC9-XFI-device-tree-node.patch"
 SRC_URI += "file://0151-cosmetic-TQMT1040-dts-remove-unneccary-whitespaces.patch"
 SRC_URI += "file://0152-cosmetic-TQMT1042-dts-remove-unneccary-whitespaces.patch"
+SRC_URI += "file://0153-sdhci-Supress-data-interrupt-error-message.patch"
